@@ -1,543 +1,970 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Virtual Labs - LAUC | Heat Flow</title>
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --navy: #0a1628;
-      --blue: #1a3a6b;
-      --accent: #e8a020;
-      --accent2: #d94f00;
-      --light: #f4f6fb;
-      --white: #ffffff;
-      --text: #1c2b3a;
-      --muted: #5a6e85;
-      --border: #dce3ef;
-      --heat1: #ff6b35;
-      --heat2: #f7c59f;
-      --heat3: #efefd0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Labs - Euler's Theorem - LAUC</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+body{background:#f8f9fa;color:#333;line-height:1.6;}
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── HEADER ── */
+header{background:linear-gradient(135deg,#2c3e50,#1a2530);color:white;padding:15px 0;box-shadow:0 4px 12px rgba(0,0,0,0.1);position:sticky;top:0;z-index:200;}
+.header-container{display:flex;justify-content:space-between;align-items:center;}
+.logo-section{display:flex;align-items:center;gap:25px;}
+.pcce-logo-container{display:flex;align-items:center;gap:15px;padding-right:25px;border-right:2px solid rgba(255,255,255,0.2);}
+.pcce-logo-img{width:60px;height:60px;object-fit:contain;border-radius:8px;background:white;padding:5px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+.pcce-logo-text .main{font-size:18px;font-weight:700;line-height:1.2;}
+.pcce-logo-text .sub{font-size:11px;opacity:0.9;margin-top:2px;}
+.virtual-labs-logo{display:flex;align-items:center;gap:12px;}
+.virtual-labs-logo i{font-size:28px;color:#3498db;}
+.virtual-labs-logo h1{font-size:22px;font-weight:600;}
+.virtual-labs-logo span{color:#3498db;}
+.header-right{display:flex;align-items:center;gap:10px;position:relative;}
+.auth-btn{padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;}
+.btn-login{background:transparent;border:1.5px solid rgba(255,255,255,0.5);color:white;}
+.btn-login:hover{background:rgba(255,255,255,0.1);}
+.btn-signup{background:#3498db;color:white;}
+.btn-signup:hover{background:#2c80b9;}
+.user-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:24px;cursor:pointer;transition:background 0.2s;}
+.user-chip:hover{background:rgba(255,255,255,0.18);}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:#3498db;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.user-chip .uname{font-size:13px;font-weight:500;}
+.user-dropdown{position:absolute;top:calc(100% + 10px);right:0;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);padding:8px 0;min-width:190px;display:none;z-index:300;}
+.user-dropdown.open{display:block;}
+.user-dropdown a{display:flex;align-items:center;gap:10px;padding:10px 18px;color:#333;text-decoration:none;font-size:14px;cursor:pointer;transition:background 0.15s;}
+.user-dropdown a:hover{background:#f0f7ff;}
+.user-dropdown a i{color:#3498db;width:16px;}
+.user-dropdown hr{border:none;border-top:1px solid #eee;margin:4px 0;}
+.user-dropdown .logout{color:#e74c3c;}
+.user-dropdown .logout i{color:#e74c3c;}
 
-    body {
-      font-family: 'Source Sans 3', sans-serif;
-      background: var(--light);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+/* ── HOME GRID ── */
+.home-page{padding:36px 0 60px;}
+.home-title{margin-bottom:28px;}
+.home-title h2{font-size:24px;color:#2c3e50;font-weight:700;margin-bottom:4px;}
+.home-title p{color:#7f8c8d;font-size:14px;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;}
+.home-card{background:white;border-radius:12px;padding:26px 18px;text-align:center;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);border:2px solid transparent;transition:all 0.25s;}
+.home-card:hover{transform:translateY(-5px);box-shadow:0 10px 28px rgba(0,0,0,0.12);border-color:#3498db;}
+.home-card .card-icon{width:58px;height:58px;border-radius:14px;background:linear-gradient(135deg,#3498db,#2c80b9);
+  margin:0 auto 14px;display:flex;align-items:center;justify-content:center;}
+.home-card .card-icon i{font-size:24px;color:white;}
+.home-card h3{font-size:15px;color:#2c3e50;margin-bottom:5px;font-weight:600;}
+.home-card p{font-size:12px;color:#7f8c8d;}
+.card-status{margin-top:10px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;display:inline-block;}
+.status-done{background:#d4edda;color:#155724;}
+.status-visited{background:#fff3cd;color:#856404;}
+.status-not{background:#f0f4f8;color:#7f8c8d;}
 
-    /* ── HEADER ── */
-    header {
-      background: var(--navy);
-      color: var(--white);
-      padding: 0;
-    }
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,27,42,0.72);z-index:500;display:none;
+  align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:white;border-radius:14px;width:100%;max-width:860px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);animation:modalIn 0.3s ease;margin:auto;}
+@keyframes modalIn{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;
+  border-bottom:1px solid #eee;position:sticky;top:0;background:white;border-radius:14px 14px 0 0;z-index:10;}
+.modal-header h2{font-size:18px;color:#2c3e50;display:flex;align-items:center;gap:10px;}
+.modal-header h2 i{color:#3498db;}
+.back-home-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#f0f4f8;border:none;
+  border-radius:8px;cursor:pointer;font-size:13px;color:#555;font-weight:600;transition:all 0.2s;}
+.back-home-btn:hover{background:#e0e7ef;color:#2c3e50;}
+.modal-body{padding:26px;}
 
-    .header-top {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 14px 40px;
-      border-bottom: 3px solid var(--accent);
-    }
+/* ── AUTH MODAL ── */
+.auth-modal-box{background:white;border-radius:14px;width:100%;max-width:420px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);animation:modalIn 0.3s ease;margin:auto;}
+.auth-tabs{display:flex;gap:4px;background:#f0f4f8;border-radius:8px;padding:4px;margin-bottom:22px;}
+.auth-tab{flex:1;padding:9px;text-align:center;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;color:#7f8c8d;transition:all 0.2s;}
+.auth-tab.active{background:white;color:#2c3e50;box-shadow:0 2px 6px rgba(0,0,0,0.08);}
+.auth-form{display:none;}
+.auth-form.active{display:block;}
+.form-field{margin-bottom:15px;}
+.form-field label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:5px;}
+.form-field input{width:100%;padding:10px 14px;border:1.5px solid #dde3ea;border-radius:8px;font-size:14px;transition:border 0.2s;outline:none;}
+.form-field input:focus{border-color:#3498db;box-shadow:0 0 0 3px rgba(52,152,219,0.1);}
+.form-error{color:#e74c3c;font-size:12px;margin-top:4px;display:none;}
+.auth-submit{width:100%;padding:11px;background:linear-gradient(to right,#3498db,#2c80b9);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;}
+.auth-submit:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(52,152,219,0.3);}
+.auth-switch{text-align:center;margin-top:14px;font-size:13px;color:#7f8c8d;}
+.auth-switch a{color:#3498db;cursor:pointer;font-weight:600;}
 
-    .logo-wrap {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+/* ── DASHBOARD ── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.dash-card{background:#f8f9fa;border-radius:10px;padding:18px;}
+.dash-card h4{font-size:13px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.dash-card h4 i{color:#3498db;}
+.score-big{font-size:38px;font-weight:800;color:#3498db;line-height:1;}
+.score-label{font-size:12px;color:#7f8c8d;margin-top:3px;}
+.prog-bar{margin-top:12px;background:#e0e7ef;border-radius:4px;height:8px;overflow:hidden;}
+.prog-bar-fill{height:8px;background:#3498db;border-radius:4px;transition:width 0.6s;}
+.score-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.score-box{background:white;border-radius:8px;padding:14px;text-align:center;border:1.5px solid #eee;}
+.score-box .val{font-size:22px;font-weight:700;}
+.score-box .lbl{font-size:11px;color:#7f8c8d;margin-top:3px;}
+.score-box.blue .val{color:#3498db;}
+.score-box.green .val{color:#27ae60;}
+.progress-list{list-style:none;}
+.progress-list li{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eee;font-size:14px;}
+.progress-list li:last-child{border-bottom:none;}
+.pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.pill-done{background:#d4edda;color:#155724;}
+.pill-visited{background:#fff3cd;color:#856404;}
+.pill-not{background:#f0f4f8;color:#7f8c8d;}
 
-    .logo-circle {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: var(--white);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Merriweather', serif;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--navy);
-      text-align: center;
-      line-height: 1.2;
-      padding: 6px;
-      flex-shrink: 0;
-      border: 2px solid var(--accent);
-    }
+/* ── SECTION CONTENT STYLES ── */
+.aim-box{background:#f0f7ff;border-left:5px solid #3498db;border-radius:8px;padding:22px;margin-bottom:18px;}
+.aim-box h3{color:#2c3e50;font-size:19px;margin-bottom:10px;}
+.aim-box p,.aim-box li{color:#444;line-height:1.8;}
+.aim-box ul{margin-left:20px;margin-top:8px;}
+.theory-block{margin-bottom:26px;}
+.theory-block h3{color:#2c3e50;font-size:17px;margin-bottom:10px;border-left:4px solid #3498db;padding-left:12px;}
+.theory-block p{color:#444;line-height:1.8;margin-bottom:8px;}
+.formula-box{background:#1a2530;color:#3dd68c;font-family:'Courier New',monospace;padding:16px 22px;border-radius:8px;font-size:15px;margin:14px 0;white-space:pre-wrap;}
+.formula-box.small{font-size:13px;padding:12px 18px;}
+.highlight-box{background:#fff8e6;border:1.5px solid #f39c12;border-radius:8px;padding:14px 18px;margin:12px 0;}
+.highlight-box p{color:#7a5c00;margin:0;}
+.step-box{background:#f0f7ff;border-radius:8px;padding:14px 18px;margin:8px 0;border-left:4px solid #3498db;}
+.step-box .step-num{font-size:11px;font-weight:700;color:#3498db;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;}
+.step-box p{margin:0;color:#333;}
+.check-badge{display:inline-block;background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-top:5px;}
+.degree-examples{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0;}
+.deg-item{background:#f8f9fa;border-radius:6px;padding:12px;text-align:center;}
+.deg-item .term{font-family:monospace;font-size:14px;color:#2c3e50;font-weight:600;}
+.deg-item .deg{font-size:11px;color:#7f8c8d;margin-top:3px;}
+.summary-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+.summary-table th{background:#2c3e50;color:white;padding:9px 13px;text-align:left;}
+.summary-table td{padding:9px 13px;border-bottom:1px solid #eee;color:#333;}
+.summary-table tr:nth-child(even) td{background:#f8f9fa;}
+.summary-table code{background:#1a2530;color:#3dd68c;padding:2px 7px;border-radius:4px;font-size:11px;}
+.case-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:14px;}
+.case-card{background:#f8f9fa;border-radius:8px;padding:14px;border-top:3px solid #3498db;}
+.case-card h4{color:#2c3e50;margin-bottom:6px;font-size:14px;}
+.case-card p{font-size:13px;color:#555;}
+.case-card .formula{font-family:monospace;color:#2c80b9;font-size:13px;margin-top:5px;}
+.theory-divider{border:none;border-top:2px dashed #eee;margin:26px 0;}
+.marking-scheme-box{background:#f0f7ff;border:1.5px solid #3498db;border-radius:10px;padding:18px 22px;margin-bottom:20px;}
+.marking-scheme-box h3{color:#2c3e50;font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.marking-scheme-box h3 i{color:#3498db;}
+.mark-rule{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #d5e8f5;}
+.mark-rule:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.mark-badge{flex-shrink:0;min-width:52px;text-align:center;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+.mark-badge.green{background:#d4edda;color:#155724;}
+.mark-badge.orange{background:#fff3cd;color:#856404;}
+.mark-badge.red{background:#f8d7da;color:#721c24;}
+.mark-rule p{font-size:13px;color:#444;margin:0;}
+.quiz-score{background:#e8f4fc;border:1px solid #b8d4f0;border-radius:8px;padding:14px 18px;margin-bottom:18px;font-size:15px;color:#2c3e50;}
+.quiz-question{background:#f8f9fa;border-radius:8px;padding:20px;margin-bottom:18px;border-left:5px solid #3498db;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.quiz-question p.q-text{font-size:15px;color:#2c3e50;margin-bottom:14px;font-weight:500;}
+.attempt-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.attempt-dots{display:flex;gap:6px;align-items:center;}
+.attempt-dot{width:10px;height:10px;border-radius:50%;background:#bdc3c7;transition:background 0.3s;}
+.attempt-dot.used{background:#e74c3c;}
+.attempt-dot.current{background:#f39c12;}
+.attempt-label{font-size:12px;color:#7f8c8d;}
+.quiz-options{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.quiz-options li label{display:flex;align-items:center;gap:10px;cursor:pointer;padding:9px 14px;border-radius:6px;border:1px solid #ddd;background:white;transition:all 0.2s;font-size:14px;}
+.quiz-options li label:hover{background:#e8f4fc;border-color:#3498db;}
+.quiz-options input[type=radio]{accent-color:#3498db;width:15px;height:15px;}
+.quiz-options li.correct label{background:#d4edda;border-color:#27ae60;color:#155724;font-weight:600;}
+.quiz-options li.wrong label{background:#f8d7da;border-color:#e74c3c;color:#721c24;}
+.quiz-options li.reveal label{background:#d4edda;border-color:#27ae60;color:#155724;}
+.q-feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-weight:500;display:none;font-size:13px;}
+.q-feedback.correct{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
+.q-feedback.wrong{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
+.q-feedback.info{background:#fff3cd;color:#856404;border:1px solid #ffeeba;}
+.q-feedback.neutral{background:#f0f4f8;color:#555;border:1px solid #ccc;}
+.hint-prompt-box{background:#fffbf0;border:1.5px solid #f39c12;border-radius:8px;padding:12px 16px;margin-top:10px;display:none;}
+.hint-prompt-box p{font-size:13px;color:#7a5c00;margin-bottom:10px;}
+.hint-prompt-box .hbtn-row{display:flex;gap:8px;}
+.hint-yes{padding:7px 16px;border-radius:6px;border:none;background:#f39c12;color:white;font-size:13px;font-weight:600;cursor:pointer;}
+.hint-yes:hover{background:#d68910;}
+.hint-no{padding:7px 16px;border-radius:6px;border:1px solid #ddd;background:#ecf0f1;color:#555;font-size:13px;font-weight:600;cursor:pointer;}
+.hint-content-box{background:#fffbf0;border:1.5px solid #f39c12;border-radius:8px;padding:12px 16px;margin-top:8px;display:none;}
+.hint-content-box h5{color:#9a6b00;font-size:13px;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+.hint-content-box p{font-size:13px;color:#7a5c00;}
+.hint-content-box .hf{margin-top:7px;background:#fef3cd;border-radius:5px;padding:5px 10px;font-family:monospace;font-size:12px;color:#5d4200;}
+.sim-wrap{display:flex;flex-direction:column;gap:18px;}
+.sim-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.sim-field label{display:block;font-size:13px;color:#7f8c8d;margin-bottom:5px;font-weight:500;}
+.sim-field input{width:100%;padding:9px 13px;border:1px solid #ddd;border-radius:6px;font-size:14px;color:#2c3e50;background:#f8f9fa;}
+.sim-field input:focus{outline:none;border-color:#3498db;background:white;}
+.sim-hint{font-size:11px;color:#aaa;margin-top:3px;}
+.var-toggle{display:flex;gap:8px;margin-bottom:14px;}
+.vt-btn{padding:6px 16px;border-radius:6px;border:1px solid #ddd;background:#f8f9fa;font-size:13px;cursor:pointer;color:#555;transition:all 0.2s;}
+.vt-btn.active{background:#e8f4fc;border-color:#3498db;color:#2c80b9;font-weight:500;}
+.sim-btn{background:linear-gradient(to right,#3498db,#2c80b9);color:white;border:none;padding:10px 26px;font-size:15px;border-radius:6px;cursor:pointer;transition:all 0.3s;font-weight:500;margin-top:4px;display:inline-flex;align-items:center;gap:8px;}
+.sim-btn:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(52,152,219,0.3);}
+.result-box{border-radius:8px;padding:20px;border:1px solid #d1e7ff;background:#e8f4fc;display:none;margin-top:14px;}
+.result-box.success{border-color:#28a745;background:#f0fff4;}
+.result-box.error{border-color:#dc3545;background:#fff5f5;}
+.result-box.info{border-color:#3498db;background:#e8f4fc;}
+.step-item{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,0.06);}
+.step-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-label{font-size:11px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;}
+.step-val{font-size:14px;color:#2c3e50;line-height:1.7;}
+.step-val code{background:#1a2530;color:#3dd68c;padding:2px 7px;border-radius:4px;font-size:12px;font-family:'Courier New',monospace;}
+.badge-ok{display:inline-block;background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.badge-fail{display:inline-block;background:#f8d7da;color:#721c24;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.badge-info{display:inline-block;background:#cce5ff;color:#004085;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.examples-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.examples-row span{font-size:12px;color:#7f8c8d;align-self:center;}
+.ex-btn{font-size:11px;padding:4px 10px;border:1px solid #ddd;border-radius:20px;background:white;color:#555;cursor:pointer;font-family:'Courier New',monospace;transition:all 0.2s;}
+.ex-btn:hover{background:#e8f4fc;border-color:#3498db;color:#2c80b9;}
 
-    .header-text h1 {
-      font-family: 'Merriweather', serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
+/* Symbolic result table */
+.sym-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px;}
+.sym-table th{background:#2c3e50;color:white;padding:8px 12px;text-align:left;font-size:12px;}
+.sym-table td{padding:9px 12px;border-bottom:1px solid #e0e7ef;color:#2c3e50;font-family:'Courier New',monospace;}
+.sym-table tr:nth-child(even) td{background:#f0f7ff;}
+.sym-table .sym-label{font-family:'Segoe UI',sans-serif;font-weight:600;color:#555;font-size:12px;}
 
-    .header-text p {
-      font-size: 0.85rem;
-      color: #b0bec5;
-      margin-top: 2px;
-    }
+.ref-list{list-style:none;}
+.ref-list li{padding:14px 16px;border-bottom:1px solid #eee;display:flex;align-items:flex-start;gap:14px;}
+.ref-list li:last-child{border-bottom:none;}
+.ref-list li i{color:#3498db;font-size:18px;margin-top:2px;flex-shrink:0;}
+.ref-list li a{color:#3498db;text-decoration:none;}
+.ref-list li a:hover{text-decoration:underline;}
+.contrib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;}
+.contrib-card{background:#f8f9fa;border-radius:10px;padding:18px;text-align:center;}
+.contrib-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#3498db,#2c3e50);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:700;}
+.contrib-card h4{color:#2c3e50;margin-bottom:4px;font-size:15px;}
+.contrib-card p{font-size:12px;color:#7f8c8d;}
+.feedback-form{max-width:580px;}
+.fb-field{margin-bottom:16px;}
+.fb-field label{display:block;font-size:14px;font-weight:500;color:#2c3e50;margin-bottom:5px;}
+.fb-field input,.fb-field textarea,.fb-field select{width:100%;padding:9px 13px;border:1px solid #ddd;border-radius:6px;font-size:14px;font-family:inherit;}
+.fb-field textarea{height:90px;resize:vertical;}
+.star-row{display:flex;gap:8px;font-size:26px;cursor:pointer;}
+.star{color:#ddd;transition:color 0.15s;}
+.star.lit{color:#f39c12;}
+.fb-submit{background:linear-gradient(to right,#3498db,#2c80b9);color:white;border:none;padding:11px 26px;font-size:15px;border-radius:6px;cursor:pointer;transition:all 0.3s;font-weight:500;}
+.fb-submit:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(52,152,219,0.3);}
+.fb-success{display:none;background:#d4edda;color:#155724;padding:14px 18px;border-radius:8px;margin-top:14px;font-weight:500;}
 
-    nav {
-      background: var(--blue);
-      padding: 0 40px;
-      display: flex;
-      gap: 0;
-    }
+/* ── DUPLICATE ACCOUNT ALERT ── */
+.auth-alert{display:none;background:#fff0f0;border:1.5px solid #e74c3c;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#c0392b;display:none;align-items:flex-start;gap:10px;}
+.auth-alert.show{display:flex;}
+.auth-alert-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
 
-    nav a {
-      color: #ccd8ea;
-      text-decoration: none;
-      padding: 12px 20px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
-    }
-
-    nav a:hover, nav a.active {
-      color: var(--white);
-      border-bottom-color: var(--accent);
-      background: rgba(255,255,255,0.05);
-    }
-
-    /* ── HERO ── */
-    .hero {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 60%, #1e4a8a 100%);
-      color: var(--white);
-      padding: 70px 40px 80px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 70% 50%, rgba(232,160,32,0.12) 0%, transparent 60%),
-                  radial-gradient(ellipse at 20% 80%, rgba(217,79,0,0.10) 0%, transparent 50%);
-    }
-
-    .heat-rings {
-      position: absolute;
-      right: 80px;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0.15;
-    }
-
-    .hero-content { position: relative; z-index: 1; }
-
-    .hero-badge {
-      display: inline-block;
-      background: rgba(232,160,32,0.18);
-      border: 1px solid rgba(232,160,32,0.5);
-      color: var(--accent);
-      padding: 5px 18px;
-      border-radius: 20px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    .hero h2 {
-      font-family: 'Merriweather', serif;
-      font-size: 2.6rem;
-      font-weight: 700;
-      line-height: 1.25;
-      margin-bottom: 16px;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .hero h2 span { color: var(--accent); }
-
-    .hero p {
-      font-size: 1.05rem;
-      color: #b0c4de;
-      max-width: 560px;
-      margin: 0 auto 36px;
-      line-height: 1.7;
-    }
-
-    .btn-primary {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-      color: var(--white);
-      text-decoration: none;
-      padding: 14px 38px;
-      border-radius: 4px;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 20px rgba(232,160,32,0.35);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(232,160,32,0.45);
-    }
-
-    /* ── EXPERIMENT CARD ── */
-    .section { padding: 60px 40px; max-width: 1100px; margin: 0 auto; width: 100%; }
-
-    .section-title {
-      font-family: 'Merriweather', serif;
-      font-size: 1.4rem;
-      color: var(--navy);
-      margin-bottom: 8px;
-      position: relative;
-      padding-bottom: 14px;
-    }
-
-    .section-title::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 48px;
-      height: 3px;
-      background: var(--accent);
-    }
-
-    .section-sub {
-      color: var(--muted);
-      font-size: 0.92rem;
-      margin-bottom: 32px;
-      margin-top: 8px;
-    }
-
-    /* Experiment grid */
-    .exp-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
-    }
-
-    .exp-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      display: flex;
-      transition: box-shadow 0.25s, transform 0.25s;
-    }
-
-    .exp-card:hover {
-      box-shadow: 0 8px 32px rgba(10,22,40,0.12);
-      transform: translateY(-2px);
-    }
-
-    .exp-card-accent {
-      width: 6px;
-      background: linear-gradient(180deg, var(--heat1) 0%, var(--accent) 100%);
-      flex-shrink: 0;
-    }
-
-    .exp-card-body {
-      padding: 28px 32px;
-      flex: 1;
-      display: flex;
-      align-items: flex-start;
-      gap: 24px;
-    }
-
-    .exp-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.7rem;
-      flex-shrink: 0;
-    }
-
-    .exp-info { flex: 1; }
-
-    .exp-info h3 {
-      font-family: 'Merriweather', serif;
-      font-size: 1.15rem;
-      color: var(--navy);
-      margin-bottom: 6px;
-    }
-
-    .exp-info p {
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.6;
-      margin-bottom: 16px;
-    }
-
-    .exp-tags {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .tag {
-      background: #edf2fb;
-      color: var(--blue);
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.76rem;
-      font-weight: 600;
-    }
-
-    .btn-go {
-      display: inline-block;
-      background: var(--blue);
-      color: var(--white);
-      text-decoration: none;
-      padding: 9px 24px;
-      border-radius: 4px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      transition: background 0.2s;
-    }
-
-    .btn-go:hover { background: var(--navy); }
-
-    /* ── STATS STRIP ── */
-    .stats-strip {
-      background: var(--blue);
-      color: var(--white);
-      padding: 30px 40px;
-      display: flex;
-      justify-content: center;
-      gap: 60px;
-      flex-wrap: wrap;
-    }
-
-    .stat { text-align: center; }
-    .stat-num {
-      font-family: 'Merriweather', serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .stat-label { font-size: 0.82rem; color: #90aac8; margin-top: 4px; }
-
-    /* ── MODULES ── */
-    .modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-    }
-
-    .module-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 22px 18px;
-      text-align: center;
-      transition: all 0.25s;
-      text-decoration: none;
-      color: var(--text);
-      display: block;
-    }
-
-    .module-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 4px 16px rgba(232,160,32,0.15);
-      transform: translateY(-2px);
-    }
-
-    .module-icon {
-      font-size: 2rem;
-      margin-bottom: 10px;
-      display: block;
-    }
-
-    .module-card h4 {
-      font-family: 'Merriweather', serif;
-      font-size: 0.95rem;
-      color: var(--navy);
-      margin-bottom: 6px;
-    }
-
-    .module-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--navy);
-      color: #7a96b2;
-      text-align: center;
-      padding: 20px 40px;
-      font-size: 0.82rem;
-      margin-top: auto;
-      border-top: 3px solid var(--accent);
-    }
-
-    footer strong { color: var(--accent); }
-
-    /* ── Flame SVG animation ── */
-    @keyframes flicker {
-      0%,100% { transform: scaleY(1) rotate(-1deg); opacity: 1; }
-      30% { transform: scaleY(1.04) rotate(1deg); opacity: 0.95; }
-      60% { transform: scaleY(0.97) rotate(-0.5deg); opacity: 0.98; }
-    }
-
-    .flame { animation: flicker 1.8s ease-in-out infinite; transform-origin: bottom center; }
-
-    @media (max-width: 700px) {
-      .hero h2 { font-size: 1.7rem; }
-      .header-top { padding: 12px 18px; }
-      nav { padding: 0 10px; overflow-x: auto; }
-      .section { padding: 40px 18px; }
-      .exp-card-body { flex-direction: column; gap: 14px; padding: 20px; }
-      .stats-strip { gap: 30px; }
-    }
-  </style>
+footer{margin-top:40px;padding:18px 0;text-align:center;color:#7f8c8d;font-size:13px;border-top:1px solid #eee;}
+.footer-logo{font-weight:bold;color:#2c3e50;}
+@media(max-width:768px){
+  .header-container{flex-wrap:wrap;gap:10px;}
+  .pcce-logo-container{border-right:none;padding-right:0;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:10px;width:100%;}
+  .virtual-labs-logo{justify-content:center;}
+  .cards-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+  .dash-grid{grid-template-columns:1fr;}
+  .sim-controls{grid-template-columns:1fr;}
+  .degree-examples{grid-template-columns:1fr 1fr;}
+  .modal-overlay{padding:8px;}
+}
+</style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ═══ HEADER ═══ -->
 <header>
-  <div class="header-top">
-    <div class="logo-wrap">
-      <div class="logo-circle">PCCOE<br/>Virtual<br/>Labs</div>
-      <div class="header-text">
-        <h1>Applied Sciences &amp; Humanities</h1>
-        <p>Pimpri Chinchwad College of Engineering — Virtual Laboratory Portal</p>
+  <div class="container header-container">
+    <div class="logo-section">
+      <div class="pcce-logo-container">
+        <img src="https://raw.githubusercontent.com/dineshkute90/virtual_lab_LAUC/main/pccoe.png"
+          alt="PCOE Logo" class="pcce-logo-img"
+          onerror="this.onerror=null;this.src='https://via.placeholder.com/60x60/2c3e50/ffffff?text=PCOE';">
+        <div class="pcce-logo-text">
+          <div class="main">APPLIED SCIENCES &amp; HUMANITIES</div>
+          <div class="sub">Pimpri Chinchwad College of Engineering</div>
+        </div>
+      </div>
+      <div class="virtual-labs-logo">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M288 0H160a16 16 0 0 0-16 16v192L7 361.9C-8 379.7-2.3 408 20 415.9l408 80c22.3 7.9 43-14.2 34-36.2L304 192V16a16 16 0 0 0-16-16zM176 16h96v32h-96zm0 64h96v32h-96zm155.4 377.9L137.7 432l74-149.4c.4-.9.6-1.7.6-2.6V48h64v232c0 .9.2 1.8.6 2.6z"/></svg></span>
+        <h1>Virtual <span>Labs</span></h1>
+      </div>
+    </div>
+    <div class="header-right" id="headerRight"></div>
+  </div>
+</header>
+
+<!-- ═══ HOME ═══ -->
+<div class="container home-page" id="homePage">
+  <div class="home-title">
+    <h2><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;color:#3498db;margin-right:10px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M288 0H160a16 16 0 0 0-16 16v192L7 361.9C-8 379.7-2.3 408 20 415.9l408 80c22.3 7.9 43-14.2 34-36.2L304 192V16a16 16 0 0 0-16-16zM176 16h96v32h-96zm0 64h96v32h-96zm155.4 377.9L137.7 432l74-149.4c.4-.9.6-1.7.6-2.6V48h64v232c0 .9.2 1.8.6 2.6z"/></svg></span>Euler's Theorem — Virtual Lab</h2>
+    <p>Engineering Mathematics · Homogeneous Functions · PCCE &nbsp;|&nbsp; Tap any card to open</p>
+  </div>
+  <div class="cards-grid">
+    <div class="home-card" onclick="openSection('aim')">
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-400a144 144 0 1 1 0 288 144 144 0 1 1 0-288zm0 64a80 80 0 1 0 0 160A80 80 0 1 0 256 176zm0 48a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg></span></div>
+      <h3>Aim</h3><p>Objective of the experiment</p>
+      <span class="card-status status-not" id="st-aim">Not Started</span>
+    </div>
+    <div class="home-card" onclick="openSection('theory')">
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg></span></div>
+      <h3>Theory</h3><p>Background concepts &amp; formulas</p>
+      <span class="card-status status-not" id="st-theory">Not Started</span>
+    </div>
+    <div class="home-card" onclick="openSection('pretest')">
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM169.8 165.3c7.9-22.3 29.1-37.3 52.8-37.3h58.3c34.9 0 63.1 28.3 63.1 63.1 0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24V250.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1 0-8.4-6.8-15.1-15.1-15.1H222.6c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg></span></div>
+      <h3>Pretest</h3><p>Pre-experiment assessment</p>
+      <span class="card-status status-not" id="st-pretest">Not Started</span>
+    </div>
+    <div class="home-card" onclick="openSection('simulation')">
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V352H64V64H512z"/></svg></span></div>
+      <h3>Simulation</h3><p>Interactive theorem verifier</p>
+      <span class="card-status status-not" id="st-simulation">Not Started</span>
+    </div>
+    <div class="home-card" onclick="openSection('posttest')">
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor"><path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM305 273L177 401c-9.4 9.4-24.6 9.4-33.9 0L79 337c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L271 239c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg></span></div>
+      <h3>Posttest</h3><p>Post-experiment assessment</p>
+      <span class="card-status status-not" id="st-posttest">Not Started</span>
+    </div>
+    <div class="home-card" onclick="openSection('references')">
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor"><path d="M249.6 471.5c10.8 3.8 22.4-4.1 22.4-15.5V78.6c0-4.2-1.6-8.4-5-11C247.4 52 202.4 32 144 32C93.5 32 46.3 45.3 18.1 56.1C6.8 60.5 0 71.7 0 83.8V454.1c0 11.9 12.8 20.2 24.1 16.5C55.6 460.1 105.5 448 144 448c33.9 0 79 14 105.6 23.5zm76.8 0C353 462 398.1 448 432 448c38.5 0 88.4 12.1 119.9 22.6c11.3 3.8 24.1-4.6 24.1-16.5V83.8c0-12.1-6.8-23.3-18.1-27.6C529.7 45.3 482.5 32 432 32c-58.4 0-103.4 20-123 45.6c-3.3 2.6-5 6.8-5 11V456c0 11.4 11.7 19.3 22.4 15.5z"/></svg></span></div>
+      <h3>References</h3><p>Further reading</p>
+      <span class="card-status status-not" id="st-references">Not Started</span>
+    </div>
+    <div class="home-card" onclick="openSection('contributors')">
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><path d="M144 160A80 80 0 1 0 144 0a80 80 0 1 0 0 160zm368 0A80 80 0 1 0 512 0a80 80 0 1 0 0 160zM0 298.7C0 310.4 9.6 320 21.3 320H234.7c.2 0 .4 0 .7 0c-26.6-23.5-43.3-57.8-43.3-96c0-7.6 .7-15 1.9-22.3c-13.6-6.3-28.7-9.7-44.6-9.7H106.7C47.8 192 0 239.8 0 298.7zM320 320c24 0 45.9-8.8 62.7-23.3c21.9-18.9 35.3-46.3 35.3-76.7c0-55.9-43.4-101.3-97.1-103.9c-1.9-.1-3.9-.1-5.8-.1C259.4 116 208 167.4 208 231.1C208 280.1 237.7 322.4 280 337.5C292.3 342.1 306 344 320 344c0 0 0 0 0-24zM405.3 320c-.2 0-.4 0-.7 0H405.3zM447.3 192H416c-15.9 0-31 3.4-44.6 9.7c1.3 7.2 1.9 14.7 1.9 22.3c0 38.2-16.8 72.5-43.3 96c.2 0 .4 0 .7 0H618.7c11.8 0 21.3-9.6 21.3-21.3C640 239.8 592.2 192 533.3 192H447.3zM255.4 337.5c-3.8-1.3-7.4-2.8-11-4.5C248.8 334.3 252 335.9 255.4 337.5zM224 480c0 17.7 14.3 32 32 32H384c17.7 0 32-14.3 32-32V416c0-53-43-96-96-96s-96 43-96 96v64z"/></svg></span></div>
+      <h3>Contributors</h3><p>Meet the team</p>
+      <span class="card-status status-not" id="st-contributors">Not Started</span>
+    </div>
+    <div class="home-card" onclick="openSection('feedback')">
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><path d="M160 368c26.5 0 48 21.5 48 48v16l72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6H448c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16V352c0 8.8 7.2 16 16 16h96zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3V474.7v-6.4V468v-4c0-6 .3-11.9 .8-17.8H64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H448c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H309.3L208 492z"/></svg></span></div>
+      <h3>Feedback</h3><p>Share your experience</p>
+      <span class="card-status status-not" id="st-feedback">Not Started</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION MODAL ═══ -->
+<div class="modal-overlay" id="sectionModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="modalTitle">Section</h2>
+      <button class="back-home-btn" onclick="closeSection()">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span> Back to Home
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ═══ AUTH MODAL ═══ -->
+<div class="modal-overlay" id="authModal">
+  <div class="auth-modal-box">
+    <div class="modal-header">
+      <h2>Student Account</h2>
+      <button class="back-home-btn" onclick="closeAuth()" style="padding:6px 12px;">✕</button>
+    </div>
+    <div style="padding:22px;">
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</div>
+        <div class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign Up</div>
+      </div>
+      <div class="auth-form active" id="form-login">
+        <div class="auth-alert" id="login-alert">
+          <span class="auth-alert-icon">⚠️</span>
+          <span id="login-alert-msg">Incorrect roll number or password.</span>
+        </div>
+        <div class="form-field"><label>Roll Number</label><input type="text" id="login-id" placeholder="e.g. 22CS101"></div>
+        <div class="form-field"><label>Password</label><input type="password" id="login-pass" placeholder="Enter password"></div>
+        <button class="auth-submit" onclick="doLogin()">Sign In</button>
+        <div class="auth-switch">No account? <a onclick="switchTab('signup')">Sign Up</a></div>
+      </div>
+      <div class="auth-form" id="form-signup">
+        <div class="auth-alert" id="signup-alert">
+          <span class="auth-alert-icon">🚫</span>
+          <span id="signup-alert-msg">An account with this roll number already exists.</span>
+        </div>
+        <div class="form-field"><label>Full Name</label><input type="text" id="su-name" placeholder="Your full name"><div class="form-error" id="su-name-err">Please enter your name.</div></div>
+        <div class="form-field"><label>Roll Number</label><input type="text" id="su-roll" placeholder="e.g. 22CS101"><div class="form-error" id="su-roll-err">Please enter your roll number.</div><div class="form-error" id="su-roll-dup">This roll number is already registered.</div></div>
+        <div class="form-field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters"><div class="form-error" id="su-pass-err">Password must be at least 6 characters.</div></div>
+        <div class="form-field"><label>Confirm Password</label><input type="password" id="su-pass2" placeholder="Re-enter password"><div class="form-error" id="su-pass2-err">Passwords do not match.</div></div>
+        <button class="auth-submit" onclick="doSignup()">Create Account</button>
+        <div class="auth-switch">Have an account? <a onclick="switchTab('login')">Sign In</a></div>
       </div>
     </div>
   </div>
-  <nav>
-    <a href="index.html" class="active">Home</a>
-    <a href="project.html">Experiment</a>
-    <a href="project.html#theory">Theory</a>
-    <a href="project.html#simulation">Simulation</a>
-    <a href="project.html#pretest">Pretest</a>
-    <a href="project.html#posttest">Posttest</a>
-    <a href="project.html#feedback">Feedback</a>
-  </nav>
-</header>
+</div>
 
-<!-- HERO -->
-<div class="hero">
-  <!-- Animated concentric rings (heat waves) -->
-  <svg class="heat-rings" width="300" height="300" viewBox="0 0 300 300">
-    <circle cx="150" cy="150" r="50"  fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
-    <circle cx="150" cy="150" r="85"  fill="none" stroke="white" stroke-width="1"   opacity="0.4"/>
-    <circle cx="150" cy="150" r="120" fill="none" stroke="white" stroke-width="0.8" opacity="0.25"/>
-    <circle cx="150" cy="150" r="140" fill="none" stroke="white" stroke-width="0.5" opacity="0.12"/>
-    <text x="150" y="158" text-anchor="middle" fill="white" font-size="36" opacity="0.5">🔥</text>
-  </svg>
-
-  <div class="hero-content">
-    <div class="hero-badge">Engineering Mathematics Experiment</div>
-    <h2>Virtual Labs — <span>Heat Flow</span><br/>Through a Cylindrical Pipe</h2>
-    <p>Explore heat transfer, thermal conductivity, and radial temperature distribution with an interactive simulation built for engineering students.</p>
-    <a href="project.html" class="btn-primary">▶ Start Experiment</a>
+<!-- ═══ DASHBOARD MODAL ═══ -->
+<div class="modal-overlay" id="dashModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>My Dashboard</h2>
+      <button class="back-home-btn" onclick="document.getElementById('dashModal').classList.remove('open')" style="padding:6px 12px;">✕</button>
+    </div>
+    <div class="modal-body" id="dashBody"></div>
   </div>
 </div>
 
-<!-- STATS STRIP -->
-<div class="stats-strip">
-  <div class="stat"><div class="stat-num">1</div><div class="stat-label">Experiment</div></div>
-  <div class="stat"><div class="stat-num">5</div><div class="stat-label">Learning Modules</div></div>
-  <div class="stat"><div class="stat-num">3</div><div class="stat-label">Interactive Steps</div></div>
-  <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Simulations</div></div>
+<footer class="container">
+  <p>Virtual Labs &copy; 2025 &nbsp;|&nbsp; Applied Sciences &amp; Humanities Department &nbsp;|&nbsp;
+    <span class="footer-logo">Pimpri Chinchwad College of Engineering</span>
+  </p>
+</footer>
+
+<!-- ══════════ CONTENT TEMPLATES ══════════ -->
+<template id="tpl-aim">
+<div class="aim-box">
+  <h3>🎯 Aim of the Experiment</h3>
+  <p>To understand and verify <strong>Euler's Theorem for Homogeneous Functions</strong> and to compute partial derivatives of homogeneous functions of two and three variables.</p>
+  <ul>
+    <li>Understand the concept of homogeneous functions and degree of homogeneity.</li>
+    <li>Verify Euler's Theorem: x·(∂f/∂x) + y·(∂f/∂y) = n·f(x, y)</li>
+    <li>Extend to three-variable functions: x·(∂f/∂x) + y·(∂f/∂y) + z·(∂f/∂z) = n·f(x, y, z)</li>
+    <li>Compute symbolic partial derivatives interactively.</li>
+    <li>Detect the degree of homogeneity of a given function automatically.</li>
+  </ul>
 </div>
+</template>
 
-<!-- EXPERIMENT CARD -->
-<div class="section">
-  <h2 class="section-title">Available Experiment</h2>
-  <p class="section-sub">Pimpri Chinchwad College of Engineering — Applied Sciences &amp; Humanities Department</p>
+<template id="tpl-theory">
+<div class="theory-block">
+  <h3>1. What is the Degree of a Function?</h3>
+  <p>The <strong>degree</strong> of a term is the <em>sum of the exponents</em> of all variables in that term.</p>
+  <div class="degree-examples">
+    <div class="deg-item"><div class="term">x² + y²</div><div class="deg">Degree = 2</div></div>
+    <div class="deg-item"><div class="term">x³y</div><div class="deg">3+1 = 4</div></div>
+    <div class="deg-item"><div class="term">x²y²</div><div class="deg">2+2 = 4</div></div>
+  </div>
+  <div class="highlight-box"><p><strong>Important:</strong> If all terms have the <em>same total degree</em>, the function is called a <strong>Homogeneous Function</strong>.</p></div>
+</div>
+<hr class="theory-divider">
+<div class="theory-block">
+  <h3>2. Homogeneous Function</h3>
+  <p>f(x, y) is <strong>homogeneous of degree n</strong> if for any scalar t:</p>
+  <div class="formula-box">f(tx, ty) = tⁿ · f(x, y)</div>
+  <p><strong>Example:</strong> f(x,y) = x² + 2xy + y²</p>
+  <div class="formula-box small">f(tx,ty) = t²x² + 2t²xy + t²y² = t²(x²+2xy+y²) = t²·f(x,y)  ✓</div>
+</div>
+<hr class="theory-divider">
+<div class="theory-block">
+  <h3>3. Euler's Theorem</h3>
+  <div class="highlight-box"><p>If f(x,y) is homogeneous of degree n with continuous partial derivatives:</p></div>
+  <div class="formula-box">x · (∂f/∂x) + y · (∂f/∂y) = n · f(x, y)</div>
+  <p>For <strong>three variables</strong>:</p>
+  <div class="formula-box">x · (∂f/∂x) + y · (∂f/∂y) + z · (∂f/∂z) = n · f(x, y, z)</div>
+</div>
+<hr class="theory-divider">
+<div class="theory-block">
+  <h3>4. Step-by-Step Example</h3>
+  <p><strong>f(x,y) = x² + y²</strong></p>
+  <div class="step-box"><div class="step-num">Step 1 — Degree</div><p>Both terms have degree 2 → <strong>n = 2</strong></p></div>
+  <div class="step-box"><div class="step-num">Step 2 — Partial Derivatives</div><p>∂f/∂x = 2x &nbsp;|&nbsp; ∂f/∂y = 2y</p></div>
+  <div class="step-box"><div class="step-num">Step 3 — Euler's Sum</div><p>x(2x) + y(2y) = 2x² + 2y²</p></div>
+  <div class="step-box"><div class="step-num">Step 4 — Verify</div><p>n·f = 2(x²+y²) = 2x²+2y² <span class="check-badge">✔ Verified</span></p></div>
+</div>
+<hr class="theory-divider">
+<div class="theory-block">
+  <h3>5. Second Order Formula</h3>
+  <div class="formula-box">x²·(∂²f/∂x²) + 2xy·(∂²f/∂x∂y) + y²·(∂²f/∂y²) = n(n–1)·f(x,y)</div>
+</div>
+<hr class="theory-divider">
+<div class="theory-block">
+  <h3>6. Examples by Degree</h3>
+  <div class="case-grid">
+    <div class="case-card"><h4>Degree 1</h4><p>f = ax + by</p><div class="formula">x·a + y·b = 1·f</div></div>
+    <div class="case-card"><h4>Degree 2</h4><p>f = x²+xy+y²</p><div class="formula">x·fx + y·fy = 2f</div></div>
+    <div class="case-card"><h4>Degree 3</h4><p>f = x³+y³</p><div class="formula">x·fx + y·fy = 3f</div></div>
+    <div class="case-card"><h4>Fractional</h4><p>f = √(x²+y²)</p><div class="formula">x·fx + y·fy = 1·f</div></div>
+  </div>
+</div>
+<hr class="theory-divider">
+<div class="theory-block">
+  <h3>7. Quick Exam Summary</h3>
+  <table class="summary-table">
+    <tr><th>Concept</th><th>Formula</th></tr>
+    <tr><td>Homogeneous function</td><td>f(tx,ty) = tⁿ·f(x,y)</td></tr>
+    <tr><td>Euler's Theorem (1st order)</td><td><code>x·fx + y·fy = n·f</code></td></tr>
+    <tr><td>Euler's Theorem (2nd order)</td><td><code>x²·fxx + 2xy·fxy + y²·fyy = n(n–1)·f</code></td></tr>
+    <tr><td>3-variable form</td><td><code>x·fx + y·fy + z·fz = n·f</code></td></tr>
+  </table>
+</div>
+<hr class="theory-divider">
+<div class="theory-block">
+  <h3>8. Conclusion</h3>
+  <div class="highlight-box"><p>Euler's theorem simplifies calculations involving homogeneous functions by directly connecting them to their partial derivatives — a key result in Engineering Mathematics.</p></div>
+</div>
+</template>
 
-  <div class="exp-grid">
-    <div class="exp-card">
-      <div class="exp-card-accent"></div>
-      <div class="exp-card-body">
-        <div class="exp-icon">🔥</div>
-        <div class="exp-info">
-          <h3>Heat Flow Through a Cylindrical Pipe</h3>
-          <p>
-            Investigate steady-state radial heat conduction through a cylindrical pipe. Compute heat flux using Fourier's law in cylindrical coordinates, determine total heat loss, and find the temperature at any radial point — all through an interactive, guided simulation.
-          </p>
-          <div class="exp-tags">
-            <span class="tag">Heat Transfer</span>
-            <span class="tag">Fourier's Law</span>
-            <span class="tag">Cylindrical Coordinates</span>
-            <span class="tag">Thermal Conductivity</span>
-            <span class="tag">Engineering Mathematics</span>
-          </div>
-          <a href="project.html" class="btn-go">Open Experiment →</a>
+<template id="tpl-pretest">
+<div class="marking-scheme-box">
+  <h3>⭐ Marking Scheme</h3>
+  <div class="mark-rule"><span class="mark-badge green">+1 Mark</span><p>Correct answer on attempt 1, 2, or 3 <strong>without</strong> a hint.</p></div>
+  <div class="mark-rule"><span class="mark-badge orange">0 Marks</span><p>Correct answer <strong>after</strong> taking a hint — "Congratulations!" shown, no mark awarded.</p></div>
+  <div class="mark-rule"><span class="mark-badge red">0 Marks</span><p>All 3 attempts used, hint declined or still wrong after hint.</p></div>
+</div>
+<div class="quiz-score" id="pre-score" style="display:none;"></div>
+<div id="pretest-container"></div>
+</template>
+
+<template id="tpl-simulation">
+<div class="sim-wrap">
+  <div style="display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
+    <button class="sim-btn" id="sim-verify-btn" onclick="simTab('verify')" style="padding:8px 18px;font-size:13px;">Verify Euler's Theorem</button>
+    <button class="sim-btn" id="sim-partial-btn" onclick="simTab('partial')" style="padding:8px 18px;font-size:13px;background:linear-gradient(to right,#7f8c8d,#555);">Find Partial Derivatives</button>
+  </div>
+
+  <!-- VERIFY TAB -->
+  <div id="sim-verify">
+    <div class="var-toggle">
+      <span style="font-size:12px;color:#7f8c8d;align-self:center;">Variables:</span>
+      <button class="vt-btn active" id="vv2" onclick="setSimVars(2,'v')">x, y</button>
+      <button class="vt-btn" id="vv3" onclick="setSimVars(3,'v')">x, y, z</button>
+    </div>
+    <div class="examples-row">
+      <span>Examples:</span>
+      <button class="ex-btn" onclick="loadSim('x^2 + 2*x*y + y^2',2,'v')">x²+2xy+y²</button>
+      <button class="ex-btn" onclick="loadSim('x^3 + y^3',3,'v')">x³+y³</button>
+      <button class="ex-btn" onclick="loadSim('Math.sqrt(x*x + y*y)',1,'v')">√(x²+y²)</button>
+      <button class="ex-btn" onclick="loadSim('x^2*y + x*y^2',3,'v')">x²y+xy²</button>
+    </div>
+    <div id="vv3-examples" style="display:none;" class="examples-row">
+      <span>3-var:</span>
+      <button class="ex-btn" onclick="loadSim('x^2 + y^2 + z^2',2,'v')">x²+y²+z²</button>
+      <button class="ex-btn" onclick="loadSim('x^3 + y^3 + z^3',3,'v')">x³+y³+z³</button>
+      <button class="ex-btn" onclick="loadSim('x*y*z',3,'v')">xyz</button>
+    </div>
+    <div class="sim-controls">
+      <div class="sim-field">
+        <label>f(x, y<span id="v-zlabel"></span>) =</label>
+        <input type="text" id="v-fn" placeholder="e.g. x^2 + 2*x*y + y^2">
+        <div class="sim-hint">Use x, y, z | Ops: + – * ^ / | sqrt()</div>
+      </div>
+      <div class="sim-field">
+        <label>Degree n</label>
+        <input type="number" id="v-deg" value="2" min="-10" max="20">
+      </div>
+    </div>
+    <button class="sim-btn" onclick="runVerify()">▶ Verify</button>
+    <div class="result-box" id="verify-result"></div>
+  </div>
+
+  <!-- PARTIAL DERIVATIVES TAB -->
+  <div id="sim-partial" style="display:none;">
+    <div class="var-toggle">
+      <span style="font-size:12px;color:#7f8c8d;align-self:center;">Variables:</span>
+      <button class="vt-btn active" id="pv2" onclick="setSimVars(2,'p')">x, y</button>
+      <button class="vt-btn" id="pv3" onclick="setSimVars(3,'p')">x, y, z</button>
+    </div>
+    <div style="background:#e8f4fc;border:1px solid #b8d4f0;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#2c3e50;">
+      💡 <strong>Symbolic mode:</strong> Enter a polynomial function to get exact symbolic partial derivatives in terms of variables (x, y, z).
+    </div>
+    <div class="examples-row">
+      <span>Examples:</span>
+      <button class="ex-btn" onclick="loadSim('x^3 + 3*x*y^2','','p')">x³+3xy²</button>
+      <button class="ex-btn" onclick="loadSim('x^2*y + y^3','','p')">x²y+y³</button>
+      <button class="ex-btn" onclick="loadSim('x^2 + 2*x*y + y^2','','p')">x²+2xy+y²</button>
+      <button class="ex-btn" onclick="loadSim('x^3*y + x*y^3','','p')">x³y+xy³</button>
+      <button class="ex-btn" onclick="loadSim('x^4 + 2*x^2*y^2 + y^4','','p')">x⁴+2x²y²+y⁴</button>
+    </div>
+    <div id="p3-examples" class="examples-row" style="display:none;">
+      <span>3-var:</span>
+      <button class="ex-btn" onclick="loadSim('x^2 + y^2 + z^2','','p')">x²+y²+z²</button>
+      <button class="ex-btn" onclick="loadSim('x^3 + y^3 + z^3','','p')">x³+y³+z³</button>
+      <button class="ex-btn" onclick="loadSim('x^2*y + y^2*z + z^2*x','','p')">x²y+y²z+z²x</button>
+    </div>
+    <div class="sim-controls">
+      <div class="sim-field">
+        <label>f(x, y<span id="p-zlabel"></span>) =</label>
+        <input type="text" id="p-fn" placeholder="e.g. x^3 + 3*x*y^2">
+        <div class="sim-hint">Polynomial terms only | Use: x^2, x*y, y^3, z^2 etc.</div>
+      </div>
+    </div>
+    <button class="sim-btn" onclick="runPartial()">🔢 Compute Symbolic Derivatives</button>
+    <div class="result-box" id="partial-result"></div>
+  </div>
+</div>
+</template>
+
+<template id="tpl-posttest">
+<div class="marking-scheme-box">
+  <h3>⭐ Marking Scheme</h3>
+  <div class="mark-rule"><span class="mark-badge green">+1 Mark</span><p>Correct answer on attempt 1, 2, or 3 <strong>without</strong> a hint.</p></div>
+  <div class="mark-rule"><span class="mark-badge orange">0 Marks</span><p>Correct answer <strong>after</strong> taking a hint — "Congratulations!" shown, no mark awarded.</p></div>
+  <div class="mark-rule"><span class="mark-badge red">0 Marks</span><p>All 3 attempts used, hint declined or still wrong after hint.</p></div>
+</div>
+<div class="quiz-score" id="post-score" style="display:none;"></div>
+<div id="posttest-container"></div>
+</template>
+
+<template id="tpl-references">
+<ul class="ref-list">
+  <li><span style="color:#3498db;font-size:20px;">📖</span><div><strong>Higher Engineering Mathematics</strong> — B. S. Grewal, Khanna Publishers.<br><span style="font-size:12px;color:#7f8c8d;">Chapter on Partial Differentiation — Euler's Theorem.</span></div></li>
+  <li><span style="color:#3498db;font-size:20px;">📖</span><div><strong>Advanced Engineering Mathematics</strong> — Erwin Kreyszig, Wiley.<br><span style="font-size:12px;color:#7f8c8d;">Partial Derivatives, Homogeneous Functions, and Applications.</span></div></li>
+  <li><span style="color:#3498db;font-size:20px;">📖</span><div><strong>Calculus: Early Transcendentals</strong> — James Stewart, Cengage.<br><span style="font-size:12px;color:#7f8c8d;">Multivariable Calculus — Partial Derivatives.</span></div></li>
+  <li><span style="color:#3498db;font-size:20px;">🌐</span><div><strong>NPTEL — Engineering Mathematics</strong><br><a href="https://nptel.ac.in" target="_blank">https://nptel.ac.in</a></div></li>
+  <li><span style="color:#3498db;font-size:20px;">🌐</span><div><strong>Khan Academy — Multivariable Calculus</strong><br><a href="https://www.khanacademy.org/math/multivariable-calculus" target="_blank">khanacademy.org/math/multivariable-calculus</a></div></li>
+  <li style="flex-direction:column;align-items:flex-start;gap:14px;border-bottom:none;padding-top:8px;">
+    <div style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#2c3e50;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="22" height="22" fill="#e74c3c"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597C14.933 166.95 14.933 256 14.933 256s0 89.05 11.412 131.917c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821C561.067 345.05 561.067 256 561.067 256s0-89.05-11.412-131.917zM232.145 337.591V175.185l142.739 81.205-142.739 81.201z"/></svg>
+      Video Lectures
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;width:100%;">
+      <div>
+        <p style="font-size:13px;font-weight:600;color:#2c3e50;margin-bottom:8px;">1. Euler's Theorem — Concept &amp; Proof</p>
+        <div style="position:relative;padding-bottom:56.25%;height:0;border-radius:10px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.13);">
+          <iframe src="https://www.youtube.com/embed/bTs7ncA_AtY" title="Euler's Theorem Video 1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:13px;font-weight:600;color:#2c3e50;margin-bottom:8px;">2. Homogeneous Functions &amp; Applications</p>
+        <div style="position:relative;padding-bottom:56.25%;height:0;border-radius:10px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.13);">
+          <iframe src="https://www.youtube.com/embed/eTp5wq-cSXY" title="Homogeneous Functions Video 2" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe>
         </div>
       </div>
     </div>
+  </li>
+</ul>
+</template>
+
+<template id="tpl-contributors">
+<div style="margin-bottom:22px;">
+  <h3 style="color:#2c3e50;font-size:16px;margin-bottom:12px;">💻 Developers</h3>
+  <div class="contrib-grid">
+    <div class="contrib-card"><div class="contrib-avatar">SV</div><h4>Shivendra Varute</h4><p>Developer</p><p style="font-size:11px;color:#3498db;margin-top:4px;">Applied Sciences Dept.</p><p style="font-size:11px;color:#7f8c8d;margin-top:2px;">shivendra.varute25@pccoepune.org</p></div>
+    <div class="contrib-card"><div class="contrib-avatar">AB</div><h4>Anushk Bandre</h4><p>Developer</p><p style="font-size:11px;color:#3498db;margin-top:4px;">Applied Sciences Dept.</p><p style="font-size:11px;color:#7f8c8d;margin-top:2px;">anushk.bandre25@pccoepune.org</p></div>
+    <div class="contrib-card"><div class="contrib-avatar">AM</div><h4>Aakanksh Muley</h4><p>Developer</p><p style="font-size:11px;color:#3498db;margin-top:4px;">Applied Sciences Dept.</p><p style="font-size:11px;color:#7f8c8d;margin-top:2px;">aakanksh.muley25@pccoepune.org</p></div>
   </div>
 </div>
-
-<!-- MODULE PREVIEWS -->
-<div class="section" style="padding-top:0;">
-  <h2 class="section-title">Experiment Modules</h2>
-  <p class="section-sub">Each module guides you through a different aspect of the experiment</p>
-  <div class="modules-grid">
-    <a href="project.html#aim" class="module-card">
-      <span class="module-icon">🎯</span>
-      <h4>Aim</h4>
-      <p>Understand the objective of the heat flow experiment</p>
-    </a>
-    <a href="project.html#theory" class="module-card">
-      <span class="module-icon">📘</span>
-      <h4>Theory</h4>
-      <p>Fourier's law, cylindrical heat conduction formula, derivations</p>
-    </a>
-    <a href="project.html#pretest" class="module-card">
-      <span class="module-icon">📝</span>
-      <h4>Pretest</h4>
-      <p>Test your prerequisite knowledge before the experiment</p>
-    </a>
-    <a href="project.html#simulation" class="module-card">
-      <span class="module-icon">⚙️</span>
-      <h4>Simulation</h4>
-      <p>Interactive step-by-step cylindrical heat flow calculator</p>
-    </a>
-    <a href="project.html#posttest" class="module-card">
-      <span class="module-icon">✅</span>
-      <h4>Posttest</h4>
-      <p>Assess your learning after completing the simulation</p>
-    </a>
-    <a href="project.html#references" class="module-card">
-      <span class="module-icon">📚</span>
-      <h4>References</h4>
-      <p>Textbooks, papers, and resources for further reading</p>
-    </a>
-    <a href="project.html#contributors" class="module-card">
-      <span class="module-icon">👥</span>
-      <h4>Contributors</h4>
-      <p>Faculty and students who developed this virtual lab</p>
-    </a>
-    <a href="project.html#feedback" class="module-card">
-      <span class="module-icon">💬</span>
-      <h4>Feedback</h4>
-      <p>Share your experience and help us improve</p>
-    </a>
+<div>
+  <h3 style="color:#2c3e50;font-size:16px;margin-bottom:12px;">🏫 Guide</h3>
+  <div class="contrib-grid" style="grid-template-columns:minmax(190px,300px);">
+    <div class="contrib-card" style="border-top:3px solid #f39c12;">
+      <div class="contrib-avatar" style="background:linear-gradient(135deg,#f39c12,#e67e22);">GT</div>
+      <h4>Prof. Ganesh Tarte</h4><p>Project Guide</p>
+      <p style="font-size:11px;color:#f39c12;margin-top:4px;">Applied Sciences &amp; Humanities Dept.</p>
+      <p style="font-size:11px;color:#7f8c8d;margin-top:2px;">Pimpri Chinchwad College of Engineering</p>
+    </div>
   </div>
 </div>
+</template>
 
-<footer>
-  Virtual Labs © 2025 &nbsp;|&nbsp; <strong>Applied Sciences &amp; Humanities Department</strong> &nbsp;|&nbsp; Pimpri Chinchwad College of Engineering
-</footer>
+<template id="tpl-feedback">
+<div class="feedback-form">
+  <div style="background:#f0f7ff;border-left:4px solid #3498db;border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:#2c3e50;">
+    📧 Feedback is sent to <strong>aakanksh.muley25@pccoepune.org</strong>.
+  </div>
+  <div class="fb-field"><label>Your Name</label><input type="text" id="fb-name" placeholder="Enter your name"></div>
+  <div class="fb-field"><label>Your Roll Number</label><input type="text" id="fb-roll" placeholder="e.g. 22CS101"></div>
+  <div class="fb-field">
+    <label>Rate this experiment</label>
+    <div class="star-row" id="stars">
+      <span class="star" data-v="1">&#9733;</span><span class="star" data-v="2">&#9733;</span>
+      <span class="star" data-v="3">&#9733;</span><span class="star" data-v="4">&#9733;</span>
+      <span class="star" data-v="5">&#9733;</span>
+    </div>
+  </div>
+  <div class="fb-field">
+    <label>How clear was the theory?</label>
+    <select id="fb-clarity">
+      <option value="">— Select —</option>
+      <option>Very clear</option><option>Clear</option>
+      <option>Somewhat clear</option><option>Confusing</option>
+    </select>
+  </div>
+  <div class="fb-field"><label>Comments / Suggestions</label><textarea id="fb-comments" placeholder="Share your experience..."></textarea></div>
+  <button class="fb-submit" onclick="submitFeedback()">✈ &nbsp;Send Feedback</button>
+  <div class="fb-success" id="fb-success">✅ &nbsp;Your email client will open — click Send to deliver feedback.</div>
+</div>
+</template>
 
-</body>
-</html>
+<script>
+// ══════════ AUTH ══════════
+function getUsers(){try{return JSON.parse(localStorage.getItem('vlab_users')||'{}');}catch(e){return{};}}
+function saveUsers(u){localStorage.setItem('vlab_users',JSON.stringify(u));}
+function getCurrentUser(){try{return JSON.parse(localStorage.getItem('vlab_current')||'null');}catch(e){return null;}}
+function setCurrentUser(u){if(u)localStorage.setItem('vlab_current',JSON.stringify(u));else localStorage.removeItem('vlab_current');}
+function getUserProgress(roll){try{return JSON.parse(localStorage.getItem('vlab_prog_'+roll)||'{}');}catch(e){return{};}}
+function saveUserProgress(roll,d){localStorage.setItem('vlab_prog_'+roll,JSON.stringify(d));}
+
+let currentUser=getCurrentUser();
+
+function renderHeader(){
+  const hr=document.getElementById('headerRight');
+  if(currentUser){
+    const ini=currentUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    hr.innerHTML=`
+      <div class="user-chip" onclick="toggleDD()">
+        <div class="user-avatar">${ini}</div>
+        <span class="uname">${currentUser.name.split(' ')[0]}</span>
+        <span style="font-size:10px;">▼</span>
+      </div>
+      <div class="user-dropdown" id="userDD">
+        <a onclick="openDashboard()">📊 My Dashboard</a>
+        <hr>
+        <a onclick="doLogout()" class="logout">🚪 Sign Out</a>
+      </div>`;
+  } else {
+    hr.innerHTML=`
+      <button class="auth-btn btn-login" onclick="openAuth('login')">Sign In</button>
+      <button class="auth-btn btn-signup" onclick="openAuth('signup')">Sign Up</button>`;
+  }
+  updateAllStatuses();
+}
+
+function toggleDD(){const dd=document.getElementById('userDD');if(dd)dd.classList.toggle('open');}
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('userDD');
+  if(dd&&!e.target.closest('.user-chip')&&!e.target.closest('.user-dropdown'))dd.classList.remove('open');
+});
+
+function openAuth(tab){hideAlert('login-alert');hideAlert('signup-alert');document.getElementById('authModal').classList.add('open');switchTab(tab);}
+function closeAuth(){document.getElementById('authModal').classList.remove('open');}
+function switchTab(tab){
+  hideAlert('login-alert');hideAlert('signup-alert');
+  ['login','signup'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+    document.getElementById('form-'+t).classList.toggle('active',t===tab);
+  });
+}
+function showAlert(id,msg){const el=document.getElementById(id);if(!el)return;if(msg){const m=document.getElementById(id+'-msg');if(m)m.textContent=msg;}el.classList.add('show');}
+function hideAlert(id){const el=document.getElementById(id);if(el)el.classList.remove('show');}
+function se(id,show){const el=document.getElementById(id);if(el)el.style.display=show?'block':'none';}
+
+function doLogin(){
+  const id=document.getElementById('login-id').value.trim().toLowerCase();
+  const pw=document.getElementById('login-pass').value;
+  hideAlert('login-alert');
+  const users=getUsers();const u=users[id];
+  if(!id||!pw){showAlert('login-alert','Please enter your roll number and password.');return;}
+  if(!u){showAlert('login-alert','No account found for this roll number. Please sign up first.');return;}
+  if(u.password!==pw){showAlert('login-alert','Incorrect password. Please try again.');return;}
+  currentUser={name:u.name,roll:u.roll};setCurrentUser(currentUser);closeAuth();renderHeader();
+}
+
+function doSignup(){
+  const name=document.getElementById('su-name').value.trim();
+  const roll=document.getElementById('su-roll').value.trim();
+  const pw=document.getElementById('su-pass').value;
+  const pw2=document.getElementById('su-pass2').value;
+  hideAlert('signup-alert');
+  ['su-name-err','su-roll-err','su-roll-dup','su-pass-err','su-pass2-err'].forEach(id=>se(id,false));
+  let ok=true;
+  if(!name){se('su-name-err',true);ok=false;}
+  if(!roll){se('su-roll-err',true);ok=false;}
+  if(pw.length<6){se('su-pass-err',true);ok=false;}
+  if(pw!==pw2){se('su-pass2-err',true);ok=false;}
+  if(!ok)return;
+  const users=getUsers();const key=roll.toLowerCase();
+  if(users[key]){se('su-roll-dup',true);showAlert('signup-alert','An account with roll number "'+roll+'" already exists. Please sign in instead.');return;}
+  users[key]={name,roll,password:pw};saveUsers(users);
+  currentUser={name,roll};setCurrentUser(currentUser);closeAuth();renderHeader();
+}
+
+function doLogout(){currentUser=null;setCurrentUser(null);renderHeader();}
+
+// ══════════ PROGRESS ══════════
+const allSections=['aim','theory','pretest','simulation','posttest','references','contributors','feedback'];
+const sLabels={aim:'Aim',theory:'Theory',pretest:'Pretest',simulation:'Simulation',posttest:'Posttest',references:'References',contributors:'Contributors',feedback:'Feedback'};
+
+function markVisited(s){
+  if(!currentUser)return;
+  const p=getUserProgress(currentUser.roll);
+  if(!p.visited)p.visited={};p.visited[s]=true;
+  saveUserProgress(currentUser.roll,p);updateAllStatuses();
+}
+function saveScore(s,score,total){
+  if(!currentUser)return;
+  const p=getUserProgress(currentUser.roll);
+  if(!p.scores)p.scores={};
+  p.scores[s]={score,total,date:new Date().toLocaleDateString()};
+  saveUserProgress(currentUser.roll,p);
+}
+function updateAllStatuses(){
+  const p=currentUser?getUserProgress(currentUser.roll):{};
+  allSections.forEach(s=>{
+    const el=document.getElementById('st-'+s);if(!el)return;
+    const v=p.visited&&p.visited[s];const sc=p.scores&&p.scores[s];
+    if(sc){el.textContent=sc.score+'/'+sc.total+' marks';el.className='card-status status-done';}
+    else if(v){el.textContent='Visited';el.className='card-status status-visited';}
+    else{el.textContent='Not Started';el.className='card-status status-not';}
+  });
+}
+
+// ══════════ SECTION MODAL ══════════
+let simVarsV=2,simVarsP=2;
+
+function openSection(name){
+  markVisited(name);
+  document.getElementById('modalTitle').textContent=sLabels[name];
+  const tpl=document.getElementById('tpl-'+name);
+  document.getElementById('modalBody').innerHTML=tpl?tpl.innerHTML:'<p>Content coming soon.</p>';
+  const modal=document.getElementById('sectionModal');
+  modal.classList.add('open');modal.scrollTop=0;
+  if(name==='pretest'){window._quizState={};buildAssessment(preQuestions,'pre');}
+  if(name==='posttest'){window._quizState={};buildAssessment(postQuestions,'post');}
+  if(name==='feedback')initStars();
+}
+function closeSection(){document.getElementById('sectionModal').classList.remove('open');}
+
+['sectionModal','authModal','dashModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+
+// ══════════ DASHBOARD ══════════
+function openDashboard(){
+  const dd=document.getElementById('userDD');if(dd)dd.classList.remove('open');
+  if(!currentUser)return;
+  const p=getUserProgress(currentUser.roll);
+  const visited=p.visited||{};const scores=p.scores||{};
+  const vc=Object.keys(visited).length;
+  let ts=0,tp=0;
+  if(scores.pretest){ts+=scores.pretest.score;tp+=scores.pretest.total;}
+  if(scores.posttest){ts+=scores.posttest.score;tp+=scores.posttest.total;}
+  let topicsHTML='';
+  allSections.forEach(s=>{
+    const v=visited[s];const sc=scores[s];
+    let pill,status;
+    if(sc){pill='pill-done';status=sc.score+'/'+sc.total+' marks';}
+    else if(v){pill='pill-visited';status='Visited';}
+    else{pill='pill-not';status='Not started';}
+    topicsHTML+=`<li><span>${sLabels[s]}</span><span class="pill ${pill}">${status}</span></li>`;
+  });
+  document.getElementById('dashBody').innerHTML=`
+    <p style="margin-bottom:6px;color:#7f8c8d;font-size:14px;">Welcome, <strong style="color:#2c3e50;">${currentUser.name}</strong> &nbsp;·&nbsp; Roll: ${currentUser.roll}</p>
+    <div class="dash-grid" style="margin-top:16px;">
+      <div class="dash-card">
+        <h4>Progress</h4>
+        <div class="score-big">${vc}<span style="font-size:18px;color:#aaa;font-weight:400;">/${allSections.length}</span></div>
+        <div class="score-label">Sections visited</div>
+        <div class="prog-bar"><div class="prog-bar-fill" style="width:${Math.round(vc/allSections.length*100)}%;"></div></div>
+      </div>
+      <div class="dash-card">
+        <h4>Assessment Scores</h4>
+        <div class="score-row">
+          <div class="score-box blue"><div class="val">${scores.pretest?scores.pretest.score+'/'+scores.pretest.total:'—'}</div><div class="lbl">Pretest</div></div>
+          <div class="score-box green"><div class="val">${scores.posttest?scores.posttest.score+'/'+scores.posttest.total:'—'}</div><div class="lbl">Posttest</div></div>
+        </div>
+        ${tp>0?`<div style="margin-top:12px;font-size:13px;color:#555;">Combined: <strong>${ts}/${tp}</strong> marks (${Math.round(ts/tp*100)}%)</div>`:'<div style="margin-top:12px;font-size:12px;color:#aaa;">Complete Pretest and Posttest to see combined score.</div>'}
+      </div>
+    </div>
+    <div class="dash-card">
+      <h4>Topic Status</h4>
+      <ul class="progress-list">${topicsHTML}</ul>
+    </div>`;
+  document.getElementById('dashModal').classList.add('open');
+}
+
+// ══════════════════════════════════════════════════════
+// QUIZ DATA — 10 questions each (5 original + 5 new tougher)
+// ══════════════════════════════════════════════════════
+const preQuestions=[
+  // ── Original 5 ──
+  {q:"Which is a homogeneous function of degree 2?",
+   opts:["x² + y²","x³ + y","x + y + 1","ln(x/y)"],ans:0,
+   hint:"All terms must have the same degree. x²+y² has all terms of degree 2.",
+   hintFormula:"x²: degree 2, y²: degree 2 → homogeneous of degree 2"},
+
+  {q:"If f(x,y) = x³ + y³, the degree of homogeneity is:",
+   opts:["1","2","3","0"],ans:2,
+   hint:"f(tx,ty) = t³(x³+y³) = t³·f(x,y) → n = 3.",
+   hintFormula:"f(tx,ty) = t³·f(x,y)  →  n = 3"},
+
+  {q:"Euler's Theorem states that for homogeneous f of degree n:",
+   opts:["x·fx + y·fy = f","x·fx + y·fy = nf","fx + fy = nf","x²·fx + y²·fy = nf"],ans:1,
+   hint:"Each variable times its own partial derivative, sum equals n×f.",
+   hintFormula:"x·(∂f/∂x) + y·(∂f/∂y) = n·f(x,y)"},
+
+  {q:"f(x,y) = √(x² + y²) is homogeneous of degree:",
+   opts:["0","½","1","2"],ans:2,
+   hint:"f(tx,ty) = √(t²x²+t²y²) = t·f(x,y) → degree 1.",
+   hintFormula:"f(tx,ty) = t¹·f(x,y)  →  n = 1"},
+
+  {q:"∂/∂x (x² + 2xy) = ?",
+   opts:["2x","2x + 2y","2y","x + 2y"],ans:1,
+   hint:"Treat y as constant: ∂/∂x(x²)=2x, ∂/∂x(2xy)=2y.",
+   hintFormula:"∂/∂x(x² + 2xy) = 2x + 2y"},
+
+  // ── 5 New Tougher Questions ──
+  {q:"If u = sin⁻¹((x² + y²)/(x + y)), which expression is correct according to Euler's theorem?",
+   opts:["x·ux + y·uy = sin(u)","x·ux + y·uy = u","x·ux + y·uy = tan(u)","x·ux + y·uy = 2u"],ans:0,
+   hint:"Let f = (x²+y²)/(x+y). Then f is homogeneous of degree 1 and u = sin⁻¹(f). For composite functions, x·ux + y·uy = n·f = n·sin(u).",
+   hintFormula:"n=1: x·ux + y·uy = 1·f = sin(u)"},
+
+  {q:"For f(x,y) = (x³ + y³)/(x + y), what is the value of x·∂f/∂x + y·∂f/∂y?",
+   opts:["f","2f","3f","0"],ans:1,
+   hint:"Degree of numerator = 3, degree of denominator = 1. So f is homogeneous of degree 3−1 = 2.",
+   hintFormula:"Degree = 3 − 1 = 2  →  x·fx + y·fy = 2f"},
+
+  {q:"The second order Euler's formula gives x²·fxx + 2xy·fxy + y²·fyy = ?",
+   opts:["n·f","n(n+1)·f","n(n−1)·f","(n−1)·f"],ans:2,
+   hint:"This is the second-order extension of Euler's theorem.",
+   hintFormula:"x²·fxx + 2xy·fxy + y²·fyy = n(n−1)·f"},
+
+  {q:"If f(x,y) = x² ln(y/x), then f is:",
+   opts:["Homogeneous of degree 2","Homogeneous of degree 1","Not homogeneous","Homogeneous of degree 0"],ans:0,
+   hint:"f(tx,ty) = t²x² · ln(ty/tx) = t²x² · ln(y/x) = t²·f(x,y). The ln(y/x) part has degree 0.",
+   hintFormula:"f(tx,ty) = t² · x² · ln(y/x) = t²·f(x,y)  →  n=2"},
+
+  {q:"If u = f(x,y) is homogeneous of degree n, and v = ln(u), then x·vx + y·vy equals:",
+   opts:["n","n·v","n/u","n·u"],ans:0,
+   hint:"v = ln(u), so vx = ux/u, vy = uy/u. Then x·vx + y·vy = (x·ux + y·uy)/u = n·u/u = n.",
+   hintFormula:"x·vx + y·vy = (x·ux + y·uy)/u = n·u/u = n"}
+];
+
+const postQuestions=[
+  // ── Original 5 ──
+  {q:"For f(x,y,z)=x³+y³+z³, Euler's theorem gives:",
+   opts:["fx+fy+fz=3f","x·fx+y·fy+z·fz=3f","x·fx+y·fy+z·fz=f","x·fx+y·fy=3f"],ans:1,
+   hint:"3-var homogeneous function of degree 3. Use 3-variable form.",
+   hintFormula:"x·fx + y·fy + z·fz = n·f  (n=3)"},
+
+  {q:"If f(tx,ty) = t⁴·f(x,y), then n =",
+   opts:["1","2","3","4"],ans:3,
+   hint:"Definition: f(tx,ty) = tⁿ·f(x,y). Read the power of t.",
+   hintFormula:"f(tx,ty) = t⁴·f(x,y)  →  n = 4"},
+
+  {q:"f(x,y) = x²y + xy² is homogeneous of degree:",
+   opts:["2","3","4","1"],ans:1,
+   hint:"x²y: degree 3, xy²: degree 3. All same → degree 3.",
+   hintFormula:"All terms have degree 3  →  n = 3"},
+
+  {q:"Which is NOT a homogeneous function?",
+   opts:["x²+xy","x³+y³","x+y+1","x²y"],ans:2,
+   hint:"Constant '1' has degree 0, breaking homogeneity.",
+   hintFormula:"f(tx,ty) = tx+ty+1 ≠ tⁿ(x+y+1)"},
+
+  {q:"For f(x,y)=x²+2xy+y², x·∂f/∂x + y·∂f/∂y = ?",
+   opts:["f","2f","3f","0"],ans:1,
+   hint:"∂f/∂x=2x+2y, ∂f/∂y=2x+2y. x(2x+2y)+y(2x+2y)=2f.",
+   hintFormula:"= 2(x²+2xy+y²) = 2f"},
+
+  // ── 5 New Tougher Questions ──
+  {q:"If u = tan⁻¹((x³ + y³)/(x² − xy + y²)), which statement is correct?",
+   opts:["x·ux + y·uy = sin(2u)/2","x·ux + y·uy = sin(u)","x·ux + y·uy = u","x·ux + y·uy = 2·tan(u)"],ans:0,
+   hint:"Let f = (x³+y³)/(x²−xy+y²). Degree of numerator = 3, denominator = 2, so f has degree 1. Then u = tan⁻¹(f) gives x·ux + y·uy = n·f·(1/(1+f²)) = sin(u)cos(u) = sin(2u)/2.",
+   hintFormula:"n=1: x·ux + y·uy = sin(u)·cos(u) = sin(2u)/2"},
+
+  {q:"For f(x,y) = x⁴ + x²y² + y⁴, the value of x²·fxx + 2xy·fxy + y²·fyy is:",
+   opts:["4f","12f","6f","8f"],ans:1,
+   hint:"f is homogeneous of degree 4. Apply second-order Euler: n(n−1)·f = 4×3×f = 12f.",
+   hintFormula:"n=4: n(n−1)·f = 4·3·f = 12f"},
+
+  {q:"If f(x,y,z) = (x²y + y²z + z²x)/(x + y + z), the degree of f is:",
+   opts:["1","2","3","0"],ans:0,
+   hint:"Numerator degree = 3 (each term is degree 3). Denominator degree = 1. So f has degree 3−1 = 2. Wait — each term: x²y, y²z, z²x each have degree 3; denominator degree 1. So degree = 2.",
+   hintFormula:"degree = 3 (numerator) − 1 (denominator) = 2"},
+
+  {q:"Given u = f(x,y) homogeneous of degree n, which of these correctly applies the deduction for x·(∂²u/∂x²) + y·(∂²u/∂x∂y)?",
+   opts:["= (n−1)·∂u/∂x","= n·∂u/∂x","= (n+1)·∂u/∂x","= n(n−1)·u"],ans:0,
+   hint:"Differentiate Euler's equation x·ux + y·uy = n·u partially with respect to x. Then x·uxx + y·uxy = (n−1)·ux.",
+   hintFormula:"∂/∂x[x·ux + y·uy = n·u]  →  x·uxx + y·uxy = (n−1)·ux"},
+
+  {q:"If f(x,y) = x^a · y^b is homogeneous and satisfies x·fx + y·fy = 5·f, then:",
+   opts:["a − b = 5","a + b = 5","a · b = 5","a/b = 5"],ans:1,
+   hint:"fx = a·x^(a-1)·y^b, fy = b·x^a·y^(b-1). Then x·fx + y·fy = (a+b)·x^a·y^b = (a+b)·f. So a+b = n = 5.",
+   hintFormula:"x·fx + y·fy = (a+b)·f = 5f  →  a+b = 5"}
+];
+
+// ══════════ QUIZ ENGINE ══════════
+function buildAssessment(questions,prefix){
+  const c=document.getElementById(prefix+'test-container');if(!c)return;
+  c.innerHTML='';
+  questions.forEach((q,qi)=>{
+    const div=document.createElement('div');div.className='quiz-que
