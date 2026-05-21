@@ -1,1663 +1,2645 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Heat Flow Through a Cylindrical Pipe — Virtual Labs LAUC</title>
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --navy:   #0a1628;
-      --blue:   #1a3a6b;
-      --accent: #e8a020;
-      --accent2:#d94f00;
-      --light:  #f4f6fb;
-      --white:  #ffffff;
-      --text:   #1c2b3a;
-      --muted:  #5a6e85;
-      --border: #dce3ef;
-      --green:  #2e7d32;
-      --red:    #c62828;
-      --heat1:  #ff6b35;
-      --heat2:  #f7c59f;
-      --heat3:  #efefd0;
-      --mono:   'JetBrains Mono', monospace;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Source Sans 3', sans-serif;
-      background: var(--light);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── HEADER ── */
-    header {
-      background: var(--navy);
-      color: var(--white);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-top {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      padding: 12px 32px;
-      border-bottom: 3px solid var(--accent);
-    }
-
-    .logo-circle {
-      width: 52px; height: 52px;
-      border-radius: 50%;
-      background: var(--white);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Merriweather', serif;
-      font-size: 9px; font-weight: 700;
-      color: var(--navy); text-align: center;
-      line-height: 1.3; padding: 6px;
-      flex-shrink: 0;
-      border: 2px solid var(--accent);
-    }
-
-    .header-text h1 { font-family: 'Merriweather', serif; font-size: 0.95rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; }
-    .header-text p  { font-size: 0.78rem; color: #b0bec5; margin-top: 2px; }
-
-    nav {
-      background: var(--blue);
-      padding: 0 32px;
-      display: flex;
-      gap: 0;
-      overflow-x: auto;
-    }
-
-    nav a {
-      color: #ccd8ea;
-      text-decoration: none;
-      padding: 10px 16px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      border-bottom: 3px solid transparent;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    nav a:hover, nav a.active {
-      color: var(--white);
-      border-bottom-color: var(--accent);
-      background: rgba(255,255,255,0.06);
-    }
-
-    /* ── LAYOUT ── */
-    .page-wrap { display: flex; flex: 1; }
-
-    /* Sidebar */
-    .sidebar {
-      width: 240px;
-      flex-shrink: 0;
-      background: var(--white);
-      border-right: 1px solid var(--border);
-      padding: 24px 0;
-      position: sticky;
-      top: 103px;
-      height: calc(100vh - 103px);
-      overflow-y: auto;
-    }
-
-    .sidebar-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 0 20px 10px;
-    }
-
-    .sidebar a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: var(--text);
-      padding: 10px 20px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      transition: all 0.18s;
-      border-left: 3px solid transparent;
-    }
-
-    .sidebar a:hover, .sidebar a.active {
-      background: #edf3ff;
-      color: var(--blue);
-      border-left-color: var(--accent);
-    }
-
-    .sidebar a .si { font-size: 1.1rem; width: 22px; }
-
-    /* Main content */
-    main {
-      flex: 1;
-      padding: 0 0 60px;
-      min-width: 0;
-    }
-
-    /* Experiment title bar */
-    .exp-title-bar {
-      background: linear-gradient(135deg, var(--navy) 0%, #1e3d6e 100%);
-      color: var(--white);
-      padding: 28px 40px;
-      border-bottom: 4px solid var(--accent);
-    }
-
-    .exp-title-bar .badge {
-      display: inline-block;
-      background: rgba(232,160,32,0.18);
-      border: 1px solid rgba(232,160,32,0.5);
-      color: var(--accent);
-      padding: 3px 14px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    .exp-title-bar h2 {
-      font-family: 'Merriweather', serif;
-      font-size: 1.55rem;
-      margin-bottom: 6px;
-    }
-
-    .exp-title-bar p { font-size: 0.9rem; color: #90aac8; }
-
-    /* Sections */
-    .section {
-      padding: 40px 40px 0;
-      scroll-margin-top: 110px;
-    }
-
-    .section:last-child { padding-bottom: 40px; }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 22px;
-      padding-bottom: 14px;
-      border-bottom: 2px solid var(--border);
-    }
-
-    .section-icon {
-      width: 44px; height: 44px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
-      flex-shrink: 0;
-    }
-
-    .section-header h3 {
-      font-family: 'Merriweather', serif;
-      font-size: 1.25rem;
-      color: var(--navy);
-    }
-
-    .section-header p {
-      font-size: 0.83rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    /* Cards */
-    .card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 24px 28px;
-      margin-bottom: 20px;
-    }
-
-    /* Theory */
-    .theory-block h4 {
-      font-family: 'Merriweather', serif;
-      font-size: 1rem;
-      color: var(--navy);
-      margin-bottom: 8px;
-    }
-
-    .theory-block p {
-      color: var(--muted);
-      line-height: 1.75;
-      font-size: 0.93rem;
-      margin-bottom: 16px;
-    }
-
-    .formula-box {
-      background: #f8faff;
-      border: 1px solid #c9d7f0;
-      border-left: 4px solid var(--accent);
-      border-radius: 6px;
-      padding: 16px 20px;
-      font-family: var(--mono);
-      font-size: 0.92rem;
-      color: var(--navy);
-      margin: 14px 0 20px;
-      line-height: 1.7;
-    }
-
-    .formula-box .label {
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .var-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 16px; }
-    .var-table th { background: var(--navy); color: var(--white); padding: 8px 14px; text-align: left; font-size: 0.82rem; }
-    .var-table td { padding: 8px 14px; border-bottom: 1px solid var(--border); }
-    .var-table tr:nth-child(even) td { background: #f8faff; }
-    .var-table code { font-family: var(--mono); font-size: 0.85em; background: #edf2fb; padding: 1px 5px; border-radius: 3px; }
-
-    /* ── SIMULATION ── */
-    .sim-stepper {
-      display: flex;
-      gap: 0;
-      margin-bottom: 28px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    .step-btn {
-      flex: 1;
-      padding: 12px 8px;
-      background: var(--white);
-      border: none;
-      border-right: 1px solid var(--border);
-      cursor: pointer;
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--muted);
-      transition: all 0.2s;
-      text-align: center;
-    }
-
-    .step-btn:last-child { border-right: none; }
-    .step-btn.active { background: var(--blue); color: var(--white); }
-    .step-btn.done   { background: #e8f5e9; color: var(--green); }
-    .step-num { display: block; font-size: 1.1rem; margin-bottom: 3px; }
-
-    .sim-panel { display: none; }
-    .sim-panel.active { display: block; }
-
-    .sim-inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 22px;
-    }
-
-    .input-group label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 5px;
-    }
-
-    .input-group label span { color: var(--muted); font-weight: 400; }
-
-    .input-group input {
-      width: 100%;
-      padding: 9px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 5px;
-      font-family: var(--mono);
-      font-size: 0.92rem;
-      color: var(--text);
-      background: #fafbff;
-      transition: border-color 0.2s;
-    }
-
-    .input-group input:focus { outline: none; border-color: var(--accent); background: var(--white); }
-
-    .btn-calc {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--blue) 0%, var(--navy) 100%);
-      color: var(--white);
-      padding: 11px 30px;
-      border: none;
-      border-radius: 5px;
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-      margin-bottom: 20px;
-    }
-
-    .btn-calc:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(10,22,40,0.2); }
-
-    .result-box {
-      background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
-      border: 1.5px solid var(--accent);
-      border-radius: 8px;
-      padding: 20px 24px;
-      margin-bottom: 18px;
-      display: none;
-    }
-
-    .result-box.show { display: block; }
-
-    .result-box h5 {
-      font-family: 'Merriweather', serif;
-      font-size: 0.88rem;
-      color: var(--navy);
-      margin-bottom: 10px;
-      letter-spacing: 0.02em;
-    }
-
-    .result-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(232,160,32,0.2);
-      font-size: 0.9rem;
-    }
-
-    .result-row:last-child { border-bottom: none; }
-    .result-label { color: var(--muted); font-size: 0.85rem; }
-    .result-value { font-family: var(--mono); font-weight: 700; color: var(--navy); font-size: 1rem; }
-
-    /* Attempt quiz inside simulation */
-    .attempt-block {
-      background: var(--white);
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 20px 24px;
-      margin-top: 18px;
-    }
-
-    .attempt-block h5 { font-family: 'Merriweather', serif; font-size: 0.92rem; color: var(--navy); margin-bottom: 12px; }
-
-    .attempt-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .attempt-row input {
-      flex: 1;
-      padding: 9px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 5px;
-      font-family: var(--mono);
-      font-size: 0.92rem;
-    }
-
-    .attempt-row input:focus { outline: none; border-color: var(--blue); }
-
-    .btn-check {
-      padding: 9px 20px;
-      background: var(--accent);
-      color: var(--white);
-      border: none;
-      border-radius: 5px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: 'Source Sans 3', sans-serif;
-      transition: background 0.2s;
-    }
-
-    .btn-check:hover { background: var(--accent2); }
-
-    .feedback-msg {
-      padding: 9px 14px;
-      border-radius: 6px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-      display: none;
-    }
-
-    .feedback-msg.correct { background: #e8f5e9; color: var(--green); display: block; border: 1px solid #a5d6a7; }
-    .feedback-msg.wrong   { background: #ffebee; color: var(--red);   display: block; border: 1px solid #ef9a9a; }
-    .feedback-msg.hint    { background: #fff8e1; color: #b8860b;      display: block; border: 1px solid var(--accent); }
-
-    /* Visualisation canvas */
-    .viz-wrap {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .viz-wrap canvas { display: block; margin: 0 auto; max-width: 100%; }
-    .viz-wrap .viz-caption { font-size: 0.8rem; color: var(--muted); margin-top: 10px; }
-
-    /* ── QUIZ ── */
-    .quiz-q {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 22px 24px;
-      margin-bottom: 16px;
-    }
-
-    .quiz-q-num {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .quiz-q-text {
-      font-size: 0.96rem;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 14px;
-      line-height: 1.55;
-    }
-
-    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
-
-    .quiz-opt {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.18s;
-      font-size: 0.9rem;
-    }
-
-    .quiz-opt:hover { border-color: var(--blue); background: #edf3ff; }
-    .quiz-opt input[type=radio] { accent-color: var(--blue); width: 15px; height: 15px; }
-    .quiz-opt.correct-ans { border-color: var(--green); background: #e8f5e9; color: var(--green); }
-    .quiz-opt.wrong-ans   { border-color: var(--red);   background: #ffebee; color: var(--red); }
-
-    .quiz-feedback {
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-size: 0.87rem;
-      font-weight: 600;
-      margin-top: 10px;
-      display: none;
-    }
-
-    .quiz-feedback.show { display: block; }
-    .quiz-feedback.right { background: #e8f5e9; color: var(--green); border: 1px solid #a5d6a7; }
-    .quiz-feedback.bad   { background: #ffebee; color: var(--red);   border: 1px solid #ef9a9a; }
-
-    .btn-quiz-submit {
-      background: var(--blue);
-      color: var(--white);
-      border: none;
-      padding: 11px 28px;
-      border-radius: 5px;
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s;
-      margin-top: 6px;
-    }
-
-    .btn-quiz-submit:hover { background: var(--navy); }
-
-    .quiz-score {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-      color: var(--white);
-      border-radius: 8px;
-      padding: 24px 28px;
-      text-align: center;
-      display: none;
-      margin-top: 20px;
-    }
-
-    .quiz-score.show { display: block; }
-    .quiz-score .score-num { font-family: 'Merriweather', serif; font-size: 2.8rem; color: var(--accent); }
-    .quiz-score p { color: #b0c4de; margin-top: 8px; font-size: 0.92rem; }
-
-    /* References */
-    .ref-item {
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .ref-item:last-child { border-bottom: none; }
-    .ref-num { width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: var(--white); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
-    .ref-text h5 { font-weight: 700; color: var(--navy); font-size: 0.92rem; margin-bottom: 4px; }
-    .ref-text p  { font-size: 0.85rem; color: var(--muted); }
-
-    /* Contributors */
-    .contrib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
-    .contrib-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
-    .contrib-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 12px; }
-    .contrib-card h5 { font-family: 'Merriweather', serif; font-size: 0.9rem; color: var(--navy); margin-bottom: 4px; }
-    .contrib-card p  { font-size: 0.78rem; color: var(--muted); }
-
-    /* Feedback form */
-    .feedback-form { display: flex; flex-direction: column; gap: 14px; }
-    .feedback-form label { font-size: 0.85rem; font-weight: 700; color: var(--navy); display: block; margin-bottom: 5px; }
-    .feedback-form input,
-    .feedback-form select,
-    .feedback-form textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 5px;
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 0.92rem;
-      color: var(--text);
-      background: #fafbff;
-      transition: border-color 0.2s;
-    }
-
-    .feedback-form input:focus,
-    .feedback-form select:focus,
-    .feedback-form textarea:focus { outline: none; border-color: var(--accent); }
-
-    .feedback-form textarea { resize: vertical; min-height: 100px; }
-
-    .stars { display: flex; gap: 6px; font-size: 1.6rem; cursor: pointer; }
-    .stars span { transition: transform 0.15s; color: #d0d0d0; }
-    .stars span.lit { color: var(--accent); }
-    .stars span:hover { transform: scale(1.2); }
-
-    .btn-submit {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-      color: var(--white);
-      border: none;
-      padding: 12px 30px;
-      border-radius: 5px;
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      align-self: flex-start;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-
-    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(232,160,32,0.35); }
-
-    .submit-success {
-      background: #e8f5e9; color: var(--green); border: 1px solid #a5d6a7;
-      padding: 14px 20px; border-radius: 6px; font-weight: 600; font-size: 0.9rem;
-      display: none;
-    }
-
-    .submit-success.show { display: block; }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--navy);
-      color: #7a96b2;
-      text-align: center;
-      padding: 18px 32px;
-      font-size: 0.82rem;
-      border-top: 3px solid var(--accent);
-    }
-
-    footer strong { color: var(--accent); }
-
-    /* ── section divider ── */
-    .sec-divider { height: 1px; background: var(--border); margin: 36px 40px 0; }
-
-    /* Pipe viz colors */
-    .pipe-legend {
-      display: flex; gap: 18px; flex-wrap: wrap; justify-content: center;
-      font-size: 0.8rem; color: var(--muted); margin-top: 12px;
-    }
-
-    .pipe-legend span { display: flex; align-items: center; gap: 6px; }
-    .legend-swatch { width: 16px; height: 16px; border-radius: 3px; display: inline-block; }
-
-    /* Responsive */
-    @media (max-width: 820px) {
-      .sidebar { display: none; }
-      .sim-inputs { grid-template-columns: 1fr; }
-      .section { padding: 28px 18px 0; }
-      .exp-title-bar { padding: 20px 18px; }
-    }
-  </style>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Virtual Labs - Euler's Theorem - LAUC</title>
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+
+body{background:#f8f9fa;color:#333;line-height:1.6;}
+
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
+
+/* ── HEADER ── */
+
+header{background:linear-gradient(135deg,#2c3e50,#1a2530);color:white;padding:15px 0;box-shadow:0 4px 12px rgba(0,0,0,0.1);position:sticky;top:0;z-index:200;}
+
+.header-container{display:flex;justify-content:space-between;align-items:center;}
+
+.logo-section{display:flex;align-items:center;gap:25px;}
+
+.pcce-logo-container{display:flex;align-items:center;gap:15px;padding-right:25px;border-right:2px solid rgba(255,255,255,0.2);}
+
+.pcce-logo-img{width:60px;height:60px;object-fit:contain;border-radius:8px;background:white;padding:5px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+
+.pcce-logo-text .main{font-size:18px;font-weight:700;line-height:1.2;}
+
+.pcce-logo-text .sub{font-size:11px;opacity:0.9;margin-top:2px;}
+
+.virtual-labs-logo{display:flex;align-items:center;gap:12px;}
+
+.virtual-labs-logo i{font-size:28px;color:#3498db;}
+
+.virtual-labs-logo h1{font-size:22px;font-weight:600;}
+
+.virtual-labs-logo span{color:#3498db;}
+
+.header-right{display:flex;align-items:center;gap:10px;position:relative;}
+
+.auth-btn{padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;}
+
+.btn-login{background:transparent;border:1.5px solid rgba(255,255,255,0.5);color:white;}
+
+.btn-login:hover{background:rgba(255,255,255,0.1);}
+
+.btn-signup{background:#3498db;color:white;}
+
+.btn-signup:hover{background:#2c80b9;}
+
+.user-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:24px;cursor:pointer;transition:background 0.2s;}
+
+.user-chip:hover{background:rgba(255,255,255,0.18);}
+
+.user-avatar{width:30px;height:30px;border-radius:50%;background:#3498db;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+
+.user-chip .uname{font-size:13px;font-weight:500;}
+
+.user-dropdown{position:absolute;top:calc(100% + 10px);right:0;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);padding:8px 0;min-width:190px;display:none;z-index:300;}
+
+.user-dropdown.open{display:block;}
+
+.user-dropdown a{display:flex;align-items:center;gap:10px;padding:10px 18px;color:#333;text-decoration:none;font-size:14px;cursor:pointer;transition:background 0.15s;}
+
+.user-dropdown a:hover{background:#f0f7ff;}
+
+.user-dropdown a i{color:#3498db;width:16px;}
+
+.user-dropdown hr{border:none;border-top:1px solid #eee;margin:4px 0;}
+
+.user-dropdown .logout{color:#e74c3c;}
+
+.user-dropdown .logout i{color:#e74c3c;}
+
+/* ── HOME GRID ── */
+
+.home-page{padding:36px 0 60px;}
+
+.home-title{margin-bottom:28px;}
+
+.home-title h2{font-size:24px;color:#2c3e50;font-weight:700;margin-bottom:4px;}
+
+.home-title p{color:#7f8c8d;font-size:14px;}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;}
+
+.home-card{background:white;border-radius:12px;padding:26px 18px;text-align:center;cursor:pointer;
+
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);border:2px solid transparent;transition:all 0.25s;}
+
+.home-card:hover{transform:translateY(-5px);box-shadow:0 10px 28px rgba(0,0,0,0.12);border-color:#3498db;}
+
+.home-card .card-icon{width:58px;height:58px;border-radius:14px;background:linear-gradient(135deg,#3498db,#2c80b9);
+
+  margin:0 auto 14px;display:flex;align-items:center;justify-content:center;}
+
+.home-card .card-icon i{font-size:24px;color:white;}
+
+.home-card h3{font-size:15px;color:#2c3e50;margin-bottom:5px;font-weight:600;}
+
+.home-card p{font-size:12px;color:#7f8c8d;}
+
+.card-status{margin-top:10px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;display:inline-block;}
+
+.status-done{background:#d4edda;color:#155724;}
+
+.status-visited{background:#fff3cd;color:#856404;}
+
+.status-not{background:#f0f4f8;color:#7f8c8d;}
+
+/* ── MODAL ── */
+
+.modal-overlay{position:fixed;inset:0;background:rgba(13,27,42,0.72);z-index:500;display:none;
+
+  align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
+
+.modal-overlay.open{display:flex;}
+
+.modal-box{background:white;border-radius:14px;width:100%;max-width:860px;
+
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);animation:modalIn 0.3s ease;margin:auto;}
+
+@keyframes modalIn{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:translateY(0)}}
+
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;
+
+  border-bottom:1px solid #eee;position:sticky;top:0;background:white;border-radius:14px 14px 0 0;z-index:10;}
+
+.modal-header h2{font-size:18px;color:#2c3e50;display:flex;align-items:center;gap:10px;}
+
+.modal-header h2 i{color:#3498db;}
+
+.back-home-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#f0f4f8;border:none;
+
+  border-radius:8px;cursor:pointer;font-size:13px;color:#555;font-weight:600;transition:all 0.2s;}
+
+.back-home-btn:hover{background:#e0e7ef;color:#2c3e50;}
+
+.modal-body{padding:26px;}
+
+/* ── AUTH MODAL ── */
+
+.auth-modal-box{background:white;border-radius:14px;width:100%;max-width:420px;
+
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);animation:modalIn 0.3s ease;margin:auto;}
+
+.auth-tabs{display:flex;gap:4px;background:#f0f4f8;border-radius:8px;padding:4px;margin-bottom:22px;}
+
+.auth-tab{flex:1;padding:9px;text-align:center;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;color:#7f8c8d;transition:all 0.2s;}
+
+.auth-tab.active{background:white;color:#2c3e50;box-shadow:0 2px 6px rgba(0,0,0,0.08);}
+
+.auth-form{display:none;}
+
+.auth-form.active{display:block;}
+
+.form-field{margin-bottom:15px;}
+
+.form-field label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:5px;}
+
+.form-field input{width:100%;padding:10px 14px;border:1.5px solid #dde3ea;border-radius:8px;font-size:14px;transition:border 0.2s;outline:none;}
+
+.form-field input:focus{border-color:#3498db;box-shadow:0 0 0 3px rgba(52,152,219,0.1);}
+
+.form-error{color:#e74c3c;font-size:12px;margin-top:4px;display:none;}
+
+.auth-submit{width:100%;padding:11px;background:linear-gradient(to right,#3498db,#2c80b9);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;}
+
+.auth-submit:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(52,152,219,0.3);}
+
+.auth-switch{text-align:center;margin-top:14px;font-size:13px;color:#7f8c8d;}
+
+.auth-switch a{color:#3498db;cursor:pointer;font-weight:600;}
+
+/* ── DASHBOARD ── */
+
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+
+.dash-card{background:#f8f9fa;border-radius:10px;padding:18px;}
+
+.dash-card h4{font-size:13px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+
+.dash-card h4 i{color:#3498db;}
+
+.score-big{font-size:38px;font-weight:800;color:#3498db;line-height:1;}
+
+.score-label{font-size:12px;color:#7f8c8d;margin-top:3px;}
+
+.prog-bar{margin-top:12px;background:#e0e7ef;border-radius:4px;height:8px;overflow:hidden;}
+
+.prog-bar-fill{height:8px;background:#3498db;border-radius:4px;transition:width 0.6s;}
+
+.score-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.score-box{background:white;border-radius:8px;padding:14px;text-align:center;border:1.5px solid #eee;}
+
+.score-box .val{font-size:22px;font-weight:700;}
+
+.score-box .lbl{font-size:11px;color:#7f8c8d;margin-top:3px;}
+
+.score-box.blue .val{color:#3498db;}
+
+.score-box.green .val{color:#27ae60;}
+
+.progress-list{list-style:none;}
+
+.progress-list li{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eee;font-size:14px;}
+
+.progress-list li:last-child{border-bottom:none;}
+
+.pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+
+.pill-done{background:#d4edda;color:#155724;}
+
+.pill-visited{background:#fff3cd;color:#856404;}
+
+.pill-not{background:#f0f4f8;color:#7f8c8d;}
+
+/* ── SECTION CONTENT STYLES ── */
+
+.aim-box{background:#f0f7ff;border-left:5px solid #3498db;border-radius:8px;padding:22px;margin-bottom:18px;}
+
+.aim-box h3{color:#2c3e50;font-size:19px;margin-bottom:10px;}
+
+.aim-box p,.aim-box li{color:#444;line-height:1.8;}
+
+.aim-box ul{margin-left:20px;margin-top:8px;}
+
+.theory-block{margin-bottom:26px;}
+
+.theory-block h3{color:#2c3e50;font-size:17px;margin-bottom:10px;border-left:4px solid #3498db;padding-left:12px;}
+
+.theory-block p{color:#444;line-height:1.8;margin-bottom:8px;}
+
+.formula-box{background:#1a2530;color:#3dd68c;font-family:'Courier New',monospace;padding:16px 22px;border-radius:8px;font-size:15px;margin:14px 0;white-space:pre-wrap;}
+
+.formula-box.small{font-size:13px;padding:12px 18px;}
+
+.highlight-box{background:#fff8e6;border:1.5px solid #f39c12;border-radius:8px;padding:14px 18px;margin:12px 0;}
+
+.highlight-box p{color:#7a5c00;margin:0;}
+
+.step-box{background:#f0f7ff;border-radius:8px;padding:14px 18px;margin:8px 0;border-left:4px solid #3498db;}
+
+.step-box .step-num{font-size:11px;font-weight:700;color:#3498db;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;}
+
+.step-box p{margin:0;color:#333;}
+
+.check-badge{display:inline-block;background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-top:5px;}
+
+.degree-examples{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0;}
+
+.deg-item{background:#f8f9fa;border-radius:6px;padding:12px;text-align:center;}
+
+.deg-item .term{font-family:monospace;font-size:14px;color:#2c3e50;font-weight:600;}
+
+.deg-item .deg{font-size:11px;color:#7f8c8d;margin-top:3px;}
+
+.summary-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+
+.summary-table th{background:#2c3e50;color:white;padding:9px 13px;text-align:left;}
+
+.summary-table td{padding:9px 13px;border-bottom:1px solid #eee;color:#333;}
+
+.summary-table tr:nth-child(even) td{background:#f8f9fa;}
+
+.summary-table code{background:#1a2530;color:#3dd68c;padding:2px 7px;border-radius:4px;font-size:11px;}
+
+.case-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:14px;}
+
+.case-card{background:#f8f9fa;border-radius:8px;padding:14px;border-top:3px solid #3498db;}
+
+.case-card h4{color:#2c3e50;margin-bottom:6px;font-size:14px;}
+
+.case-card p{font-size:13px;color:#555;}
+
+.case-card .formula{font-family:monospace;color:#2c80b9;font-size:13px;margin-top:5px;}
+
+.theory-divider{border:none;border-top:2px dashed #eee;margin:26px 0;}
+
+.marking-scheme-box{background:#f0f7ff;border:1.5px solid #3498db;border-radius:10px;padding:18px 22px;margin-bottom:20px;}
+
+.marking-scheme-box h3{color:#2c3e50;font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+
+.marking-scheme-box h3 i{color:#3498db;}
+
+.mark-rule{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #d5e8f5;}
+
+.mark-rule:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+
+.mark-badge{flex-shrink:0;min-width:52px;text-align:center;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+
+.mark-badge.green{background:#d4edda;color:#155724;}
+
+.mark-badge.orange{background:#fff3cd;color:#856404;}
+
+.mark-badge.red{background:#f8d7da;color:#721c24;}
+
+.mark-rule p{font-size:13px;color:#444;margin:0;}
+
+.quiz-score{background:#e8f4fc;border:1px solid #b8d4f0;border-radius:8px;padding:14px 18px;margin-bottom:18px;font-size:15px;color:#2c3e50;}
+
+.quiz-question{background:#f8f9fa;border-radius:8px;padding:20px;margin-bottom:18px;border-left:5px solid #3498db;animation:fadeIn 0.3s ease;}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.quiz-question p.q-text{font-size:15px;color:#2c3e50;margin-bottom:14px;font-weight:500;}
+
+.attempt-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+
+.attempt-dots{display:flex;gap:6px;align-items:center;}
+
+.attempt-dot{width:10px;height:10px;border-radius:50%;background:#bdc3c7;transition:background 0.3s;}
+
+.attempt-dot.used{background:#e74c3c;}
+
+.attempt-dot.current{background:#f39c12;}
+
+.attempt-label{font-size:12px;color:#7f8c8d;}
+
+.quiz-options{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+
+.quiz-options li label{display:flex;align-items:center;gap:10px;cursor:pointer;padding:9px 14px;border-radius:6px;border:1px solid #ddd;background:white;transition:all 0.2s;font-size:14px;}
+
+.quiz-options li label:hover{background:#e8f4fc;border-color:#3498db;}
+
+.quiz-options input[type=radio]{accent-color:#3498db;width:15px;height:15px;}
+
+.quiz-options li.correct label{background:#d4edda;border-color:#27ae60;color:#155724;font-weight:600;}
+
+.quiz-options li.wrong label{background:#f8d7da;border-color:#e74c3c;color:#721c24;}
+
+.quiz-options li.reveal label{background:#d4edda;border-color:#27ae60;color:#155724;}
+
+.q-feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-weight:500;display:none;font-size:13px;}
+
+.q-feedback.correct{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
+
+.q-feedback.wrong{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
+
+.q-feedback.info{background:#fff3cd;color:#856404;border:1px solid #ffeeba;}
+
+.q-feedback.neutral{background:#f0f4f8;color:#555;border:1px solid #ccc;}
+
+.hint-prompt-box{background:#fffbf0;border:1.5px solid #f39c12;border-radius:8px;padding:12px 16px;margin-top:10px;display:none;}
+
+.hint-prompt-box p{font-size:13px;color:#7a5c00;margin-bottom:10px;}
+
+.hint-prompt-box .hbtn-row{display:flex;gap:8px;}
+
+.hint-yes{padding:7px 16px;border-radius:6px;border:none;background:#f39c12;color:white;font-size:13px;font-weight:600;cursor:pointer;}
+
+.hint-yes:hover{background:#d68910;}
+
+.hint-no{padding:7px 16px;border-radius:6px;border:1px solid #ddd;background:#ecf0f1;color:#555;font-size:13px;font-weight:600;cursor:pointer;}
+
+.hint-content-box{background:#fffbf0;border:1.5px solid #f39c12;border-radius:8px;padding:12px 16px;margin-top:8px;display:none;}
+
+.hint-content-box h5{color:#9a6b00;font-size:13px;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+
+.hint-content-box p{font-size:13px;color:#7a5c00;}
+
+.hint-content-box .hf{margin-top:7px;background:#fef3cd;border-radius:5px;padding:5px 10px;font-family:monospace;font-size:12px;color:#5d4200;}
+
+.sim-wrap{display:flex;flex-direction:column;gap:18px;}
+
+.sim-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+.sim-field label{display:block;font-size:13px;color:#7f8c8d;margin-bottom:5px;font-weight:500;}
+
+.sim-field input{width:100%;padding:9px 13px;border:1px solid #ddd;border-radius:6px;font-size:14px;color:#2c3e50;background:#f8f9fa;}
+
+.sim-field input:focus{outline:none;border-color:#3498db;background:white;}
+
+.sim-hint{font-size:11px;color:#aaa;margin-top:3px;}
+
+.var-toggle{display:flex;gap:8px;margin-bottom:14px;}
+
+.vt-btn{padding:6px 16px;border-radius:6px;border:1px solid #ddd;background:#f8f9fa;font-size:13px;cursor:pointer;color:#555;transition:all 0.2s;}
+
+.vt-btn.active{background:#e8f4fc;border-color:#3498db;color:#2c80b9;font-weight:500;}
+
+.sim-btn{background:linear-gradient(to right,#3498db,#2c80b9);color:white;border:none;padding:10px 26px;font-size:15px;border-radius:6px;cursor:pointer;transition:all 0.3s;font-weight:500;margin-top:4px;display:inline-flex;align-items:center;gap:8px;}
+
+.sim-btn:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(52,152,219,0.3);}
+
+.result-box{border-radius:8px;padding:20px;border:1px solid #d1e7ff;background:#e8f4fc;display:none;margin-top:14px;}
+
+.result-box.success{border-color:#28a745;background:#f0fff4;}
+
+.result-box.error{border-color:#dc3545;background:#fff5f5;}
+
+.result-box.info{border-color:#3498db;background:#e8f4fc;}
+
+.step-item{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,0.06);}
+
+.step-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+
+.step-label{font-size:11px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;}
+
+.step-val{font-size:14px;color:#2c3e50;line-height:1.7;}
+
+.step-val code{background:#1a2530;color:#3dd68c;padding:2px 7px;border-radius:4px;font-size:12px;font-family:'Courier New',monospace;}
+
+.badge-ok{display:inline-block;background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+
+.badge-fail{display:inline-block;background:#f8d7da;color:#721c24;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+
+.badge-info{display:inline-block;background:#cce5ff;color:#004085;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+
+.examples-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+
+.examples-row span{font-size:12px;color:#7f8c8d;align-self:center;}
+
+.ex-btn{font-size:11px;padding:4px 10px;border:1px solid #ddd;border-radius:20px;background:white;color:#555;cursor:pointer;font-family:'Courier New',monospace;transition:all 0.2s;}
+
+.ex-btn:hover{background:#e8f4fc;border-color:#3498db;color:#2c80b9;}
+
+/* Symbolic result table */
+
+.sym-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px;}
+
+.sym-table th{background:#2c3e50;color:white;padding:8px 12px;text-align:left;font-size:12px;}
+
+.sym-table td{padding:9px 12px;border-bottom:1px solid #e0e7ef;color:#2c3e50;font-family:'Courier New',monospace;}
+
+.sym-table tr:nth-child(even) td{background:#f0f7ff;}
+
+.sym-table .sym-label{font-family:'Segoe UI',sans-serif;font-weight:600;color:#555;font-size:12px;}
+
+.ref-list{list-style:none;}
+
+.ref-list li{padding:14px 16px;border-bottom:1px solid #eee;display:flex;align-items:flex-start;gap:14px;}
+
+.ref-list li:last-child{border-bottom:none;}
+
+.ref-list li i{color:#3498db;font-size:18px;margin-top:2px;flex-shrink:0;}
+
+.ref-list li a{color:#3498db;text-decoration:none;}
+
+.ref-list li a:hover{text-decoration:underline;}
+
+.contrib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;}
+
+.contrib-card{background:#f8f9fa;border-radius:10px;padding:18px;text-align:center;}
+
+.contrib-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#3498db,#2c3e50);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:700;}
+
+.contrib-card h4{color:#2c3e50;margin-bottom:4px;font-size:15px;}
+
+.contrib-card p{font-size:12px;color:#7f8c8d;}
+
+.feedback-form{max-width:580px;}
+
+.fb-field{margin-bottom:16px;}
+
+.fb-field label{display:block;font-size:14px;font-weight:500;color:#2c3e50;margin-bottom:5px;}
+
+.fb-field input,.fb-field textarea,.fb-field select{width:100%;padding:9px 13px;border:1px solid #ddd;border-radius:6px;font-size:14px;font-family:inherit;}
+
+.fb-field textarea{height:90px;resize:vertical;}
+
+.star-row{display:flex;gap:8px;font-size:26px;cursor:pointer;}
+
+.star{color:#ddd;transition:color 0.15s;}
+
+.star.lit{color:#f39c12;}
+
+.fb-submit{background:linear-gradient(to right,#3498db,#2c80b9);color:white;border:none;padding:11px 26px;font-size:15px;border-radius:6px;cursor:pointer;transition:all 0.3s;font-weight:500;}
+
+.fb-submit:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(52,152,219,0.3);}
+
+.fb-success{display:none;background:#d4edda;color:#155724;padding:14px 18px;border-radius:8px;margin-top:14px;font-weight:500;}
+
+/* ── DUPLICATE ACCOUNT ALERT ── */
+
+.auth-alert{display:none;background:#fff0f0;border:1.5px solid #e74c3c;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#c0392b;display:none;align-items:flex-start;gap:10px;}
+
+.auth-alert.show{display:flex;}
+
+.auth-alert-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+
+footer{margin-top:40px;padding:18px 0;text-align:center;color:#7f8c8d;font-size:13px;border-top:1px solid #eee;}
+
+.footer-logo{font-weight:bold;color:#2c3e50;}
+
+@media(max-width:768px){
+
+  .header-container{flex-wrap:wrap;gap:10px;}
+
+  .pcce-logo-container{border-right:none;padding-right:0;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:10px;width:100%;}
+
+  .virtual-labs-logo{justify-content:center;}
+
+  .cards-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+
+  .dash-grid{grid-template-columns:1fr;}
+
+  .sim-controls{grid-template-columns:1fr;}
+
+  .degree-examples{grid-template-columns:1fr 1fr;}
+
+  .modal-overlay{padding:8px;}
+
+}
+
+</style>
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // ── EmailJS initialisation ──
+  // Replace YOUR_PUBLIC_KEY with your actual EmailJS Public Key
+  // Sign up free at https://www.emailjs.com → Account → API Keys
+  emailjs.init("YOUR_PUBLIC_KEY");
+</script>
 </head>
+
 <body>
 
-<!-- HEADER -->
+<!-- ═══ HEADER ═══ -->
+
 <header>
-  <div class="header-top">
-    <div class="logo-circle">PCCOE<br/>Virtual<br/>Labs</div>
-    <div class="header-text">
-      <h1>Applied Sciences &amp; Humanities</h1>
-      <p>Pimpri Chinchwad College of Engineering — Virtual Laboratory Portal</p>
+
+  <div class="container header-container">
+
+    <div class="logo-section">
+
+      <div class="pcce-logo-container">
+
+        <img src="https://raw.githubusercontent.com/dineshkute90/virtual_lab_LAUC/main/pccoe.png"
+
+          alt="PCOE Logo" class="pcce-logo-img"
+
+          onerror="this.onerror=null;this.src='https://via.placeholder.com/60x60/2c3e50/ffffff?text=PCOE';">
+
+        <div class="pcce-logo-text">
+
+          <div class="main">APPLIED SCIENCES &amp; HUMANITIES</div>
+
+          <div class="sub">Pimpri Chinchwad College of Engineering</div>
+
+        </div>
+
+      </div>
+
+      <div class="virtual-labs-logo">
+
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M288 0H160a16 16 0 0 0-16 16v192L7 361.9C-8 379.7-2.3 408 20 415.9l408 80c22.3 7.9 43-14.2 34-36.2L304 192V16a16 16 0 0 0-16-16zM176 16h96v32h-96zm0 64h96v32h-96zm155.4 377.9L137.7 432l74-149.4c.4-.9.6-1.7.6-2.6V48h64v232c0 .9.2 1.8.6 2.6z"/></svg></span>
+
+        <h1>Virtual <span>Labs</span></h1>
+
+      </div>
+
     </div>
+
+    <div class="header-right" id="headerRight"></div>
+
   </div>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="#aim">Aim</a>
-    <a href="#theory">Theory</a>
-    <a href="#pretest">Pretest</a>
-    <a href="#simulation">Simulation</a>
-    <a href="#posttest">Posttest</a>
-    <a href="#references">References</a>
-    <a href="#contributors">Contributors</a>
-    <a href="#feedback">Feedback</a>
-  </nav>
+
 </header>
 
-<div class="page-wrap">
+<!-- ═══ HOME ═══ -->
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-label">Experiment Modules</div>
-    <a href="#aim"          class="active"><span class="si">🎯</span> Aim</a>
-    <a href="#theory">      <span class="si">📘</span> Theory</a>
-    <a href="#pretest">     <span class="si">📝</span> Pretest</a>
-    <a href="#simulation">  <span class="si">⚙️</span> Simulation</a>
-    <a href="#posttest">    <span class="si">✅</span> Posttest</a>
-    <a href="#references">  <span class="si">📚</span> References</a>
-    <a href="#contributors"><span class="si">👥</span> Contributors</a>
-    <a href="#feedback">    <span class="si">💬</span> Feedback</a>
-  </aside>
+<div class="container home-page" id="homePage">
 
-  <main>
+  <div class="home-title">
 
-    <!-- TITLE BAR -->
-    <div class="exp-title-bar">
-      <div class="badge">Engineering Mathematics — Heat Transfer</div>
-      <h2>🔥 Heat Flow Through a Cylindrical Pipe</h2>
-      <p>Steady-state radial heat conduction · Fourier's Law in Cylindrical Coordinates · Interactive Simulation</p>
+    <h2><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;color:#3498db;margin-right:10px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M288 0H160a16 16 0 0 0-16 16v192L7 361.9C-8 379.7-2.3 408 20 415.9l408 80c22.3 7.9 43-14.2 34-36.2L304 192V16a16 16 0 0 0-16-16zM176 16h96v32h-96zm0 64h96v32h-96zm155.4 377.9L137.7 432l74-149.4c.4-.9.6-1.7.6-2.6V48h64v232c0 .9.2 1.8.6 2.6z"/></svg></span>Euler's Theorem — Virtual Lab</h2>
+
+    <p>Engineering Mathematics · Homogeneous Functions · PCCE &nbsp;|&nbsp; Tap any card to open</p>
+
+  </div>
+
+  <div class="cards-grid">
+
+    <div class="home-card" onclick="openSection('aim')">
+
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-400a144 144 0 1 1 0 288 144 144 0 1 1 0-288zm0 64a80 80 0 1 0 0 160A80 80 0 1 0 256 176zm0 48a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg></span></div>
+
+      <h3>Aim</h3><p>Objective of the experiment</p>
+
+      <span class="card-status status-not" id="st-aim">Not Started</span>
+
     </div>
 
-    <!-- ─────────────── AIM ─────────────── -->
-    <div class="section" id="aim">
-      <div class="section-header">
-        <div class="section-icon">🎯</div>
-        <div>
-          <h3>Aim</h3>
-          <p>Objective of the Experiment</p>
-        </div>
-      </div>
+    <div class="home-card" onclick="openSection('theory')">
 
-      <div class="card">
-        <div class="theory-block">
-          <h4>Primary Objective</h4>
-          <p>
-            To study the steady-state radial heat flow through a cylindrical pipe (or coaxial cylinders) using Fourier's law in cylindrical coordinates. Students will:
-          </p>
-          <ul style="color:var(--muted);font-size:0.92rem;line-height:1.9;padding-left:22px;">
-            <li>Derive and apply the formula for radial heat flux <em>q</em> through a cylindrical wall.</li>
-            <li>Calculate the total heat loss by applying an appropriate multiplying factor.</li>
-            <li>Determine the temperature distribution at any radial position between the inner and outer surfaces.</li>
-            <li>Visualise the temperature gradient across the pipe cross-section.</li>
-            <li>Verify the logarithmic nature of the temperature profile in cylindrical geometry.</li>
-          </ul>
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg></span></div>
 
-          <div class="formula-box" style="margin-top:18px;">
-            <div class="label">Experiment at a Glance</div>
-            Given : T₀ (inner temp), T₁ (outer temp), R₀ (inner radius), R₁ (outer radius), k (thermal conductivity)<br/>
-            Find  : q (heat flux per metre), q₁ (total heat loss), T(R) (temperature at radius R)
-          </div>
-        </div>
-      </div>
+      <h3>Theory</h3><p>Background concepts &amp; formulas</p>
+
+      <span class="card-status status-not" id="st-theory">Not Started</span>
+
     </div>
 
-    <div class="sec-divider"></div>
+    <div class="home-card" onclick="openSection('pretest')">
 
-    <!-- ─────────────── THEORY ─────────────── -->
-    <div class="section" id="theory">
-      <div class="section-header">
-        <div class="section-icon">📘</div>
-        <div>
-          <h3>Theory</h3>
-          <p>Background Concepts and Derivations</p>
-        </div>
-      </div>
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM169.8 165.3c7.9-22.3 29.1-37.3 52.8-37.3h58.3c34.9 0 63.1 28.3 63.1 63.1 0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24V250.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1 0-8.4-6.8-15.1-15.1-15.1H222.6c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg></span></div>
 
-      <div class="card theory-block">
-        <h4>1. Fourier's Law of Heat Conduction</h4>
-        <p>
-          Fourier's law states that the rate of heat transfer through a material is proportional to the negative gradient of temperature and to the area perpendicular to that gradient through which heat flows.
-        </p>
-        <div class="formula-box">
-          <div class="label">Cartesian form</div>
-          q = −k · A · (dT/dx)
-        </div>
-        <p>where <em>k</em> is thermal conductivity (W/m·K), <em>A</em> is cross-sectional area, and <em>dT/dx</em> is the temperature gradient.</p>
+      <h3>Pretest</h3><p>Pre-experiment assessment</p>
 
-        <h4 style="margin-top:20px;">2. Heat Conduction in Cylindrical Geometry</h4>
-        <p>
-          For a hollow cylinder with inner radius R₀ and outer radius R₁, the area through which heat flows at radius r is <em>A = 2πrL</em>.
-          Applying Fourier's law for steady-state radial conduction over unit length (L = 1 m):
-        </p>
-        <div class="formula-box">
-          <div class="label">Derivation — Separation of variables</div>
-          q · dr/r  =  −k · dT &nbsp;&nbsp;&nbsp;&nbsp; (separating variables)<br/>
-          Integrating from R₀ to R₁ :<br/>
-          q · ln(R₁/R₀)  =  2πk(T₀ − T₁)<br/><br/>
-          ∴ &nbsp;<strong>q = (2πk(T₀ − T₁)) / ln(R₁/R₀)</strong>  &nbsp; [W/m]
-        </div>
+      <span class="card-status status-not" id="st-pretest">Not Started</span>
 
-        <h4 style="margin-top:16px;">3. Total Heat Loss</h4>
-        <p>
-          When the pipe has a certain length (expressed through a multiplying factor MF representing πr²L or total surface area), the total heat loss is:
-        </p>
-        <div class="formula-box">
-          <div class="label">Total heat loss</div>
-          <strong>q₁ = MF × q</strong>  &nbsp; [W]
-        </div>
-
-        <h4 style="margin-top:16px;">4. Temperature at Any Radius R</h4>
-        <p>
-          The temperature varies logarithmically from the inner surface to the outer surface. At any intermediate radius R (R₀ ≤ R ≤ R₁):
-        </p>
-        <div class="formula-box">
-          <div class="label">Radial temperature distribution</div>
-          <strong>T(R) = T₀ − [ q · ln(R/R₀) ] / (2πk)</strong>  &nbsp; [°C]
-        </div>
-
-        <table class="var-table" style="margin-top:18px;">
-          <tr><th>Symbol</th><th>Quantity</th><th>Unit</th></tr>
-          <tr><td><code>T₀</code></td><td>Temperature at inner surface</td><td>°C</td></tr>
-          <tr><td><code>T₁</code></td><td>Temperature at outer surface</td><td>°C</td></tr>
-          <tr><td><code>R₀</code></td><td>Inner radius of pipe</td><td>m</td></tr>
-          <tr><td><code>R₁</code></td><td>Outer radius of pipe (or insulation)</td><td>m</td></tr>
-          <tr><td><code>k</code></td><td>Thermal conductivity of material</td><td>W/(m·K)</td></tr>
-          <tr><td><code>q</code></td><td>Heat flux (heat flow per unit length)</td><td>W/m</td></tr>
-          <tr><td><code>MF</code></td><td>Multiplying factor (length or area scale)</td><td>—</td></tr>
-          <tr><td><code>q₁</code></td><td>Total heat loss</td><td>W</td></tr>
-          <tr><td><code>T(R)</code></td><td>Temperature at radius R</td><td>°C</td></tr>
-        </table>
-      </div>
     </div>
 
-    <div class="sec-divider"></div>
+    <div class="home-card" onclick="openSection('simulation')">
 
-    <!-- ─────────────── PRETEST ─────────────── -->
-    <div class="section" id="pretest">
-      <div class="section-header">
-        <div class="section-icon">📝</div>
-        <div>
-          <h3>Pretest</h3>
-          <p>Assess your prerequisite knowledge before the simulation</p>
-        </div>
-      </div>
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V352H64V64H512z"/></svg></span></div>
 
-      <!-- Q1 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 1 of 5</div>
-        <div class="quiz-q-text">Fourier's law of heat conduction states that heat flux is proportional to:</div>
-        <div class="quiz-options" id="pre-q1">
-          <label class="quiz-opt"><input type="radio" name="pre1" value="a"/> Temperature difference squared</label>
-          <label class="quiz-opt"><input type="radio" name="pre1" value="b"/> Negative temperature gradient</label>
-          <label class="quiz-opt"><input type="radio" name="pre1" value="c"/> Temperature itself</label>
-          <label class="quiz-opt"><input type="radio" name="pre1" value="d"/> Rate of change of thermal conductivity</label>
-        </div>
-        <div class="quiz-feedback" id="pre-fb1"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('pre1','b','pre-fb1','pre-q1')">Check Answer</button>
-      </div>
+      <h3>Simulation</h3><p>Interactive theorem verifier</p>
 
-      <!-- Q2 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 2 of 5</div>
-        <div class="quiz-q-text">In cylindrical coordinates, the area perpendicular to radial heat flow at radius r and unit length is:</div>
-        <div class="quiz-options" id="pre-q2">
-          <label class="quiz-opt"><input type="radio" name="pre2" value="a"/> πr²</label>
-          <label class="quiz-opt"><input type="radio" name="pre2" value="b"/> 2πr</label>
-          <label class="quiz-opt"><input type="radio" name="pre2" value="c"/> 4πr²</label>
-          <label class="quiz-opt"><input type="radio" name="pre2" value="d"/> πr</label>
-        </div>
-        <div class="quiz-feedback" id="pre-fb2"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('pre2','b','pre-fb2','pre-q2')">Check Answer</button>
-      </div>
+      <span class="card-status status-not" id="st-simulation">Not Started</span>
 
-      <!-- Q3 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 3 of 5</div>
-        <div class="quiz-q-text">Which mathematical function describes the temperature profile in radial cylindrical conduction?</div>
-        <div class="quiz-options" id="pre-q3">
-          <label class="quiz-opt"><input type="radio" name="pre3" value="a"/> Linear (T ∝ r)</label>
-          <label class="quiz-opt"><input type="radio" name="pre3" value="b"/> Exponential (T ∝ eʳ)</label>
-          <label class="quiz-opt"><input type="radio" name="pre3" value="c"/> Logarithmic (T ∝ ln r)</label>
-          <label class="quiz-opt"><input type="radio" name="pre3" value="d"/> Quadratic (T ∝ r²)</label>
-        </div>
-        <div class="quiz-feedback" id="pre-fb3"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('pre3','c','pre-fb3','pre-q3')">Check Answer</button>
-      </div>
-
-      <!-- Q4 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 4 of 5</div>
-        <div class="quiz-q-text">If thermal conductivity <em>k</em> doubles (while all else stays the same), the heat flux <em>q</em>:</div>
-        <div class="quiz-options" id="pre-q4">
-          <label class="quiz-opt"><input type="radio" name="pre4" value="a"/> Halves</label>
-          <label class="quiz-opt"><input type="radio" name="pre4" value="b"/> Stays the same</label>
-          <label class="quiz-opt"><input type="radio" name="pre4" value="c"/> Doubles</label>
-          <label class="quiz-opt"><input type="radio" name="pre4" value="d"/> Quadruples</label>
-        </div>
-        <div class="quiz-feedback" id="pre-fb4"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('pre4','c','pre-fb4','pre-q4')">Check Answer</button>
-      </div>
-
-      <!-- Q5 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 5 of 5</div>
-        <div class="quiz-q-text">The SI unit of thermal conductivity is:</div>
-        <div class="quiz-options" id="pre-q5">
-          <label class="quiz-opt"><input type="radio" name="pre5" value="a"/> W/m²</label>
-          <label class="quiz-opt"><input type="radio" name="pre5" value="b"/> W/m·K</label>
-          <label class="quiz-opt"><input type="radio" name="pre5" value="c"/> J/kg·K</label>
-          <label class="quiz-opt"><input type="radio" name="pre5" value="d"/> W/K</label>
-        </div>
-        <div class="quiz-feedback" id="pre-fb5"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('pre5','b','pre-fb5','pre-q5')">Check Answer</button>
-      </div>
     </div>
 
-    <div class="sec-divider"></div>
+    <div class="home-card" onclick="openSection('posttest')">
 
-    <!-- ─────────────── SIMULATION ─────────────── -->
-    <div class="section" id="simulation">
-      <div class="section-header">
-        <div class="section-icon">⚙️</div>
-        <div>
-          <h3>Simulation</h3>
-          <p>Interactive step-by-step heat flow calculator with guided practice</p>
-        </div>
-      </div>
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor"><path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM305 273L177 401c-9.4 9.4-24.6 9.4-33.9 0L79 337c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L271 239c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg></span></div>
 
-      <!-- Step tabs -->
-      <div class="sim-stepper">
-        <button class="step-btn active" id="tab1" onclick="showStep(1)">
-          <span class="step-num">①</span>Inputs &amp; Heat Flux
-        </button>
-        <button class="step-btn" id="tab2" onclick="showStep(2)">
-          <span class="step-num">②</span>Total Heat Loss
-        </button>
-        <button class="step-btn" id="tab3" onclick="showStep(3)">
-          <span class="step-num">③</span>Temp at Radius
-        </button>
-        <button class="step-btn" id="tab4" onclick="showStep(4)">
-          <span class="step-num">④</span>Visualisation
-        </button>
-      </div>
+      <h3>Posttest</h3><p>Post-experiment assessment</p>
 
-      <!-- STEP 1 -->
-      <div class="sim-panel active" id="panel1">
-        <div class="card">
-          <h4 style="font-family:'Merriweather',serif;margin-bottom:16px;color:var(--navy);">Step 1 — Enter Parameters &amp; Compute Heat Flux</h4>
-          <div class="sim-inputs">
-            <div class="input-group">
-              <label>T₀ — Inner Temperature <span>(°C)</span></label>
-              <input type="number" id="T0" placeholder="e.g. 200" value="200"/>
-            </div>
-            <div class="input-group">
-              <label>T₁ — Outer Temperature <span>(°C)</span></label>
-              <input type="number" id="T1" placeholder="e.g. 50" value="50"/>
-            </div>
-            <div class="input-group">
-              <label>R₀ — Inner Radius <span>(m)</span></label>
-              <input type="number" id="R0" placeholder="e.g. 0.05" step="0.001" value="0.05"/>
-            </div>
-            <div class="input-group">
-              <label>R₁ — Outer Radius <span>(m)</span></label>
-              <input type="number" id="R1" placeholder="e.g. 0.10" step="0.001" value="0.10"/>
-            </div>
-            <div class="input-group">
-              <label>k — Thermal Conductivity <span>(W/m·K)</span></label>
-              <input type="number" id="k" placeholder="e.g. 45" step="0.1" value="45"/>
-            </div>
-          </div>
-          <button class="btn-calc" onclick="computeQ()">▶ Compute Heat Flux q</button>
+      <span class="card-status status-not" id="st-posttest">Not Started</span>
 
-          <div class="result-box" id="res1">
-            <h5>📊 Computed Result</h5>
-            <div class="result-row">
-              <span class="result-label">Formula used</span>
-              <span class="result-value" style="font-size:0.82rem;">q = (2πk·ΔT) / ln(R₁/R₀)</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Heat Flux q</span>
-              <span class="result-value" id="res-q">—</span>
-            </div>
-          </div>
-
-          <!-- Practice attempt -->
-          <div class="attempt-block" id="att1" style="display:none;">
-            <h5>🧠 Practice: Now compute q yourself using the formula, then enter your answer below.</h5>
-            <div class="feedback-msg" id="att1-fb"></div>
-            <div class="attempt-row">
-              <input type="number" id="att1-input" placeholder="Enter your q value (W/m)" step="0.0001"/>
-              <button class="btn-check" onclick="checkAttempt(1)">Check</button>
-            </div>
-            <button class="btn-calc" onclick="showStep(2)" style="margin-top:10px;background:var(--green);">Continue to Step 2 →</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 2 -->
-      <div class="sim-panel" id="panel2">
-        <div class="card">
-          <h4 style="font-family:'Merriweather',serif;margin-bottom:16px;color:var(--navy);">Step 2 — Compute Total Heat Loss q₁</h4>
-          <div class="sim-inputs">
-            <div class="input-group">
-              <label>MF — Multiplying Factor</label>
-              <input type="number" id="MF" placeholder="e.g. 3.14" step="0.01" value="3.14"/>
-            </div>
-          </div>
-          <button class="btn-calc" onclick="computeQ1()">▶ Compute Total Heat Loss q₁</button>
-
-          <div class="result-box" id="res2">
-            <h5>📊 Computed Result</h5>
-            <div class="result-row">
-              <span class="result-label">Formula used</span>
-              <span class="result-value" style="font-size:0.82rem;">q₁ = MF × q</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Total Heat Loss q₁</span>
-              <span class="result-value" id="res-q1">—</span>
-            </div>
-          </div>
-
-          <div class="attempt-block" id="att2" style="display:none;">
-            <h5>🧠 Practice: Compute q₁ = MF × q yourself and enter below.</h5>
-            <div class="feedback-msg" id="att2-fb"></div>
-            <div class="attempt-row">
-              <input type="number" id="att2-input" placeholder="Enter your q₁ value (W)" step="0.0001"/>
-              <button class="btn-check" onclick="checkAttempt(2)">Check</button>
-            </div>
-            <button class="btn-calc" onclick="showStep(3)" style="margin-top:10px;background:var(--green);">Continue to Step 3 →</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 3 -->
-      <div class="sim-panel" id="panel3">
-        <div class="card">
-          <h4 style="font-family:'Merriweather',serif;margin-bottom:16px;color:var(--navy);">Step 3 — Temperature at a Given Radius</h4>
-          <div class="sim-inputs">
-            <div class="input-group">
-              <label>R — Target Radius <span>(m)</span></label>
-              <input type="number" id="R" placeholder="e.g. 0.07" step="0.001" value="0.07"/>
-            </div>
-          </div>
-          <button class="btn-calc" onclick="computeT()">▶ Compute T(R)</button>
-
-          <div class="result-box" id="res3">
-            <h5>📊 Computed Result</h5>
-            <div class="result-row">
-              <span class="result-label">Formula used</span>
-              <span class="result-value" style="font-size:0.82rem;">T(R) = T₀ − q·ln(R/R₀)/(2πk)</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Temperature T(R)</span>
-              <span class="result-value" id="res-T">—</span>
-            </div>
-          </div>
-
-          <div class="attempt-block" id="att3" style="display:none;">
-            <h5>🧠 Practice: Compute T(R) yourself using the formula and enter below.</h5>
-            <div class="feedback-msg" id="att3-fb"></div>
-            <div class="attempt-row">
-              <input type="number" id="att3-input" placeholder="Enter your T(R) value (°C)" step="0.0001"/>
-              <button class="btn-check" onclick="checkAttempt(3)">Check</button>
-            </div>
-            <button class="btn-calc" onclick="showStep(4)" style="margin-top:10px;background:var(--green);">View Visualisation →</button>
-          </div>
-        </div>
-
-        <!-- Summary -->
-        <div class="card" id="summary-card" style="display:none;">
-          <h4 style="font-family:'Merriweather',serif;margin-bottom:14px;color:var(--navy);">📋 Summary of Results</h4>
-          <div class="result-row"><span class="result-label">Heat Flux q</span><span class="result-value" id="sum-q">—</span></div>
-          <div class="result-row"><span class="result-label">Total Heat Loss q₁</span><span class="result-value" id="sum-q1">—</span></div>
-          <div class="result-row"><span class="result-label">Temperature at R</span><span class="result-value" id="sum-T">—</span></div>
-        </div>
-      </div>
-
-      <!-- STEP 4 — Visualisation -->
-      <div class="sim-panel" id="panel4">
-        <div class="card">
-          <h4 style="font-family:'Merriweather',serif;margin-bottom:16px;color:var(--navy);">Pipe Cross-Section — Temperature Distribution</h4>
-
-          <div class="viz-wrap">
-            <canvas id="pipeCanvas" width="500" height="300"></canvas>
-            <div class="pipe-legend">
-              <span><span class="legend-swatch" style="background:#d32f2f;"></span> High Temp (inner)</span>
-              <span><span class="legend-swatch" style="background:#ff8a65;"></span> Intermediate</span>
-              <span><span class="legend-swatch" style="background:#1565c0;"></span> Low Temp (outer)</span>
-              <span><span class="legend-swatch" style="background:#cfd8dc;"></span> Surrounding</span>
-            </div>
-            <div class="viz-caption">Radial temperature distribution shown via colour gradient (inner = hot → outer = cool)</div>
-          </div>
-
-          <div class="viz-wrap">
-            <canvas id="graphCanvas" width="500" height="260"></canvas>
-            <div class="viz-caption">Temperature vs Radius — logarithmic profile</div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div class="sec-divider"></div>
+    <div class="home-card" onclick="openSection('references')">
 
-    <!-- ─────────────── POSTTEST ─────────────── -->
-    <div class="section" id="posttest">
-      <div class="section-header">
-        <div class="section-icon">✅</div>
-        <div>
-          <h3>Posttest</h3>
-          <p>Assess your understanding after the simulation</p>
-        </div>
-      </div>
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor"><path d="M249.6 471.5c10.8 3.8 22.4-4.1 22.4-15.5V78.6c0-4.2-1.6-8.4-5-11C247.4 52 202.4 32 144 32C93.5 32 46.3 45.3 18.1 56.1C6.8 60.5 0 71.7 0 83.8V454.1c0 11.9 12.8 20.2 24.1 16.5C55.6 460.1 105.5 448 144 448c33.9 0 79 14 105.6 23.5zm76.8 0C353 462 398.1 448 432 448c38.5 0 88.4 12.1 119.9 22.6c11.3 3.8 24.1-4.6 24.1-16.5V83.8c0-12.1-6.8-23.3-18.1-27.6C529.7 45.3 482.5 32 432 32c-58.4 0-103.4 20-123 45.6c-3.3 2.6-5 6.8-5 11V456c0 11.4 11.7 19.3 22.4 15.5z"/></svg></span></div>
 
-      <!-- Q1 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 1 of 5</div>
-        <div class="quiz-q-text">The heat flux formula for a cylindrical pipe (per unit length) is:</div>
-        <div class="quiz-options" id="post-q1">
-          <label class="quiz-opt"><input type="radio" name="post1" value="a"/> q = k·A·ΔT/Δr</label>
-          <label class="quiz-opt"><input type="radio" name="post1" value="b"/> q = (2πk·ΔT) / ln(R₁/R₀)</label>
-          <label class="quiz-opt"><input type="radio" name="post1" value="c"/> q = k·ΔT / (R₁ − R₀)</label>
-          <label class="quiz-opt"><input type="radio" name="post1" value="d"/> q = 2πk·R₀·ΔT</label>
-        </div>
-        <div class="quiz-feedback" id="post-fb1"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('post1','b','post-fb1','post-q1')">Check Answer</button>
-      </div>
+      <h3>References</h3><p>Further reading</p>
 
-      <!-- Q2 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 2 of 5</div>
-        <div class="quiz-q-text">If T₀ = 300°C, T₁ = 100°C, R₀ = 0.05 m, R₁ = 0.10 m, k = 50 W/m·K, what is q approximately?</div>
-        <div class="quiz-options" id="post-q2">
-          <label class="quiz-opt"><input type="radio" name="post2" value="a"/> ~45,000 W/m</label>
-          <label class="quiz-opt"><input type="radio" name="post2" value="b"/> ~90,700 W/m</label>
-          <label class="quiz-opt"><input type="radio" name="post2" value="c"/> ~18,000 W/m</label>
-          <label class="quiz-opt"><input type="radio" name="post2" value="d"/> ~181,000 W/m</label>
-        </div>
-        <div class="quiz-feedback" id="post-fb2"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('post2','b','post-fb2','post-q2')">Check Answer</button>
-      </div>
+      <span class="card-status status-not" id="st-references">Not Started</span>
 
-      <!-- Q3 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 3 of 5</div>
-        <div class="quiz-q-text">The temperature at any intermediate radius R in a cylindrical pipe follows a _____ profile.</div>
-        <div class="quiz-options" id="post-q3">
-          <label class="quiz-opt"><input type="radio" name="post3" value="a"/> Linear</label>
-          <label class="quiz-opt"><input type="radio" name="post3" value="b"/> Parabolic</label>
-          <label class="quiz-opt"><input type="radio" name="post3" value="c"/> Logarithmic</label>
-          <label class="quiz-opt"><input type="radio" name="post3" value="d"/> Exponential</label>
-        </div>
-        <div class="quiz-feedback" id="post-fb3"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('post3','c','post-fb3','post-q3')">Check Answer</button>
-      </div>
-
-      <!-- Q4 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 4 of 5</div>
-        <div class="quiz-q-text">In steady-state heat conduction through a cylindrical pipe, heat flux q:</div>
-        <div class="quiz-options" id="post-q4">
-          <label class="quiz-opt"><input type="radio" name="post4" value="a"/> Increases with radius</label>
-          <label class="quiz-opt"><input type="radio" name="post4" value="b"/> Decreases with radius</label>
-          <label class="quiz-opt"><input type="radio" name="post4" value="c"/> Remains constant (per unit length)</label>
-          <label class="quiz-opt"><input type="radio" name="post4" value="d"/> Depends on time</label>
-        </div>
-        <div class="quiz-feedback" id="post-fb4"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('post4','c','post-fb4','post-q4')">Check Answer</button>
-      </div>
-
-      <!-- Q5 -->
-      <div class="quiz-q">
-        <div class="quiz-q-num">Question 5 of 5</div>
-        <div class="quiz-q-text">Adding thick insulation (increasing R₁ significantly) to a pipe — what happens to q?</div>
-        <div class="quiz-options" id="post-q5">
-          <label class="quiz-opt"><input type="radio" name="post5" value="a"/> q increases (more area for heat flow)</label>
-          <label class="quiz-opt"><input type="radio" name="post5" value="b"/> q decreases (ln(R₁/R₀) increases, q drops)</label>
-          <label class="quiz-opt"><input type="radio" name="post5" value="c"/> q stays the same</label>
-          <label class="quiz-opt"><input type="radio" name="post5" value="d"/> q becomes zero</label>
-        </div>
-        <div class="quiz-feedback" id="post-fb5"></div>
-        <button class="btn-quiz-submit" onclick="checkQuiz('post5','b','post-fb5','post-q5')">Check Answer</button>
-      </div>
     </div>
 
-    <div class="sec-divider"></div>
+    <div class="home-card" onclick="openSection('contributors')">
 
-    <!-- ─────────────── REFERENCES ─────────────── -->
-    <div class="section" id="references">
-      <div class="section-header">
-        <div class="section-icon">📚</div>
-        <div>
-          <h3>References</h3>
-          <p>Textbooks and resources for further reading</p>
-        </div>
-      </div>
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><path d="M144 160A80 80 0 1 0 144 0a80 80 0 1 0 0 160zm368 0A80 80 0 1 0 512 0a80 80 0 1 0 0 160zM0 298.7C0 310.4 9.6 320 21.3 320H234.7c.2 0 .4 0 .7 0c-26.6-23.5-43.3-57.8-43.3-96c0-7.6 .7-15 1.9-22.3c-13.6-6.3-28.7-9.7-44.6-9.7H106.7C47.8 192 0 239.8 0 298.7zM320 320c24 0 45.9-8.8 62.7-23.3c21.9-18.9 35.3-46.3 35.3-76.7c0-55.9-43.4-101.3-97.1-103.9c-1.9-.1-3.9-.1-5.8-.1C259.4 116 208 167.4 208 231.1C208 280.1 237.7 322.4 280 337.5C292.3 342.1 306 344 320 344c0 0 0 0 0-24zM405.3 320c-.2 0-.4 0-.7 0H405.3zM447.3 192H416c-15.9 0-31 3.4-44.6 9.7c1.3 7.2 1.9 14.7 1.9 22.3c0 38.2-16.8 72.5-43.3 96c.2 0 .4 0 .7 0H618.7c11.8 0 21.3-9.6 21.3-21.3C640 239.8 592.2 192 533.3 192H447.3zM255.4 337.5c-3.8-1.3-7.4-2.8-11-4.5C248.8 334.3 252 335.9 255.4 337.5zM224 480c0 17.7 14.3 32 32 32H384c17.7 0 32-14.3 32-32V416c0-53-43-96-96-96s-96 43-96 96v64z"/></svg></span></div>
 
-      <div class="card">
-        <div class="ref-item">
-          <div class="ref-num">1</div>
-          <div class="ref-text">
-            <h5>Cengel, Y.A. &amp; Ghajar, A.J. — Heat and Mass Transfer (5th Ed.)</h5>
-            <p>McGraw-Hill Education, 2015. Chapter 3: Steady Heat Conduction — Cylindrical and Spherical Systems.</p>
-          </div>
-        </div>
-        <div class="ref-item">
-          <div class="ref-num">2</div>
-          <div class="ref-text">
-            <h5>Incropera, F.P. et al. — Fundamentals of Heat and Mass Transfer (7th Ed.)</h5>
-            <p>John Wiley &amp; Sons, 2011. Chapter 3: One-Dimensional Steady-State Conduction.</p>
-          </div>
-        </div>
-        <div class="ref-item">
-          <div class="ref-num">3</div>
-          <div class="ref-text">
-            <h5>Grewal, B.S. — Higher Engineering Mathematics (44th Ed.)</h5>
-            <p>Khanna Publishers, 2018. Chapter on Partial Differential Equations and Heat Equation.</p>
-          </div>
-        </div>
-        <div class="ref-item">
-          <div class="ref-num">4</div>
-          <div class="ref-text">
-            <h5>Kreith, F. &amp; Bohn, M.S. — Principles of Heat Transfer (7th Ed.)</h5>
-            <p>Cengage Learning, 2011. Radial systems and thermal resistance networks.</p>
-          </div>
-        </div>
-        <div class="ref-item">
-          <div class="ref-num">5</div>
-          <div class="ref-text">
-            <h5>NPTEL — Heat Transfer (IIT Bombay)</h5>
-            <p>Online lecture series. Module 3: Conduction Heat Transfer — Cylindrical and Spherical Coordinates. nptel.ac.in</p>
-          </div>
-        </div>
-      </div>
+      <h3>Contributors</h3><p>Meet the team</p>
+
+      <span class="card-status status-not" id="st-contributors">Not Started</span>
+
     </div>
 
-    <div class="sec-divider"></div>
+    <div class="home-card" onclick="openSection('feedback')">
 
-    <!-- ─────────────── CONTRIBUTORS ─────────────── -->
-    <div class="section" id="contributors">
-      <div class="section-header">
-        <div class="section-icon">👥</div>
-        <div>
-          <h3>Contributors</h3>
-          <p>Faculty and students involved in developing this virtual lab</p>
-        </div>
-      </div>
+      <div class="card-icon"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><path d="M160 368c26.5 0 48 21.5 48 48v16l72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6H448c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16V352c0 8.8 7.2 16 16 16h96zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3V474.7v-6.4V468v-4c0-6 .3-11.9 .8-17.8H64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H448c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H309.3L208 492z"/></svg></span></div>
 
-      <div class="card">
-        <div class="contrib-grid">
-          <div class="contrib-card">
-            <div class="contrib-avatar">👩‍🏫</div>
-            <h5>Dr. Priya Sharma</h5>
-            <p>Associate Professor<br/>Applied Sciences &amp; Humanities</p>
-          </div>
-          <div class="contrib-card">
-            <div class="contrib-avatar">👨‍🏫</div>
-            <h5>Prof. Rahul Desai</h5>
-            <p>Assistant Professor<br/>Engineering Mathematics</p>
-          </div>
-          <div class="contrib-card">
-            <div class="contrib-avatar">👨‍💻</div>
-            <h5>Joydeep Bose</h5>
-            <p>Student Developer<br/>B.E. Computer Engineering</p>
-          </div>
-          <div class="contrib-card">
-            <div class="contrib-avatar">👩‍💻</div>
-            <h5>Ananya Kulkarni</h5>
-            <p>Student Developer<br/>B.E. Mechanical Engineering</p>
-          </div>
-        </div>
-      </div>
+      <h3>Feedback</h3><p>Share your experience</p>
+
+      <span class="card-status status-not" id="st-feedback">Not Started</span>
+
     </div>
 
-    <div class="sec-divider"></div>
+  </div>
 
-    <!-- ─────────────── FEEDBACK ─────────────── -->
-    <div class="section" id="feedback">
-      <div class="section-header">
-        <div class="section-icon">💬</div>
-        <div>
-          <h3>Feedback</h3>
-          <p>Share your experience and help us improve</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="submit-success" id="fb-success">
-          ✅ Thank you for your feedback! We appreciate your response and will use it to improve the virtual lab.
-        </div>
-
-        <div class="feedback-form" id="fb-form">
-          <div>
-            <label>Full Name</label>
-            <input type="text" id="fb-name" placeholder="Enter your name"/>
-          </div>
-          <div>
-            <label>Roll Number / Student ID</label>
-            <input type="text" id="fb-roll" placeholder="e.g. 2023BCE042"/>
-          </div>
-          <div>
-            <label>Overall Rating</label>
-            <div class="stars" id="stars">
-              <span data-v="1">★</span>
-              <span data-v="2">★</span>
-              <span data-v="3">★</span>
-              <span data-v="4">★</span>
-              <span data-v="5">★</span>
-            </div>
-          </div>
-          <div>
-            <label>How helpful was the simulation?</label>
-            <select id="fb-helpful">
-              <option value="">Select an option</option>
-              <option>Very helpful — I understood the concept fully</option>
-              <option>Helpful — mostly clear with minor doubts</option>
-              <option>Somewhat helpful — needed additional resources</option>
-              <option>Not helpful — I'm still confused</option>
-            </select>
-          </div>
-          <div>
-            <label>Comments / Suggestions</label>
-            <textarea id="fb-comments" placeholder="Share your thoughts, suggestions, or any issues you faced..."></textarea>
-          </div>
-          <button class="btn-submit" onclick="submitFeedback()">Submit Feedback →</button>
-        </div>
-      </div>
-    </div>
-
-  </main>
 </div>
 
-<footer>
-  Virtual Labs © 2025 &nbsp;|&nbsp; <strong>Applied Sciences &amp; Humanities Department</strong> &nbsp;|&nbsp; Pimpri Chinchwad College of Engineering
+<!-- ═══ SECTION MODAL ═══ -->
+
+<div class="modal-overlay" id="sectionModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h2 id="modalTitle">Section</h2>
+
+      <button class="back-home-btn" onclick="closeSection()">
+
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;vertical-align:-0.125em;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span> Back to Home
+
+      </button>
+
+    </div>
+
+    <div class="modal-body" id="modalBody"></div>
+
+  </div>
+
+</div>
+
+<!-- ═══ AUTH MODAL ═══ -->
+
+<div class="modal-overlay" id="authModal">
+
+  <div class="auth-modal-box">
+
+    <div class="modal-header">
+
+      <h2>Student Account</h2>
+
+      <button class="back-home-btn" onclick="closeAuth()" style="padding:6px 12px;">✕</button>
+
+    </div>
+
+    <div style="padding:22px;">
+
+      <div class="auth-tabs">
+
+        <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</div>
+
+        <div class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign Up</div>
+
+      </div>
+
+      <div class="auth-form active" id="form-login">
+
+        <div class="auth-alert" id="login-alert">
+
+          <span class="auth-alert-icon">⚠️</span>
+
+          <span id="login-alert-msg">Incorrect roll number or password.</span>
+
+        </div>
+
+        <div class="form-field"><label>Roll Number</label><input type="text" id="login-id" placeholder="e.g. 22CS101"></div>
+
+        <div class="form-field"><label>Password</label><input type="password" id="login-pass" placeholder="Enter password"></div>
+
+        <button class="auth-submit" onclick="doLogin()">Sign In</button>
+
+        <div class="auth-switch">No account? <a onclick="switchTab('signup')">Sign Up</a></div>
+
+      </div>
+
+      <div class="auth-form" id="form-signup">
+
+        <div class="auth-alert" id="signup-alert">
+
+          <span class="auth-alert-icon">🚫</span>
+
+          <span id="signup-alert-msg">An account with this roll number already exists.</span>
+
+        </div>
+
+        <div class="form-field"><label>Full Name</label><input type="text" id="su-name" placeholder="Your full name"><div class="form-error" id="su-name-err">Please enter your name.</div></div>
+
+        <div class="form-field"><label>Roll Number</label><input type="text" id="su-roll" placeholder="e.g. 22CS101"><div class="form-error" id="su-roll-err">Please enter your roll number.</div><div class="form-error" id="su-roll-dup">This roll number is already registered.</div></div>
+
+        <div class="form-field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters"><div class="form-error" id="su-pass-err">Password must be at least 6 characters.</div></div>
+
+        <div class="form-field"><label>Confirm Password</label><input type="password" id="su-pass2" placeholder="Re-enter password"><div class="form-error" id="su-pass2-err">Passwords do not match.</div></div>
+
+        <button class="auth-submit" onclick="doSignup()">Create Account</button>
+
+        <div class="auth-switch">Have an account? <a onclick="switchTab('login')">Sign In</a></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══ DASHBOARD MODAL ═══ -->
+
+<div class="modal-overlay" id="dashModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h2>My Dashboard</h2>
+
+      <button class="back-home-btn" onclick="document.getElementById('dashModal').classList.remove('open')" style="padding:6px 12px;">✕</button>
+
+    </div>
+
+    <div class="modal-body" id="dashBody"></div>
+
+  </div>
+
+</div>
+
+<footer class="container">
+
+  <p>Virtual Labs &copy; 2025 &nbsp;|&nbsp; Applied Sciences &amp; Humanities Department &nbsp;|&nbsp;
+
+    <span class="footer-logo">Pimpri Chinchwad College of Engineering</span>
+
+  </p>
+
 </footer>
 
+<!-- ══════════ CONTENT TEMPLATES ══════════ -->
+
+<template id="tpl-aim">
+
+<div class="aim-box">
+
+  <h3>🎯 Aim of the Experiment</h3>
+
+  <p>To understand and verify <strong>Euler's Theorem for Homogeneous Functions</strong> and to compute partial derivatives of homogeneous functions of two and three variables.</p>
+
+  <ul>
+
+    <li>Understand the concept of homogeneous functions and degree of homogeneity.</li>
+
+    <li>Verify Euler's Theorem: x·(∂f/∂x) + y·(∂f/∂y) = n·f(x, y)</li>
+
+    <li>Extend to three-variable functions: x·(∂f/∂x) + y·(∂f/∂y) + z·(∂f/∂z) = n·f(x, y, z)</li>
+
+    <li>Compute symbolic partial derivatives interactively.</li>
+
+    <li>Detect the degree of homogeneity of a given function automatically.</li>
+
+  </ul>
+
+</div>
+
+</template>
+
+<template id="tpl-theory">
+
+<div class="theory-block">
+
+  <h3>1. What is the Degree of a Function?</h3>
+
+  <p>The <strong>degree</strong> of a term is the <em>sum of the exponents</em> of all variables in that term.</p>
+
+  <div class="degree-examples">
+
+    <div class="deg-item"><div class="term">x² + y²</div><div class="deg">Degree = 2</div></div>
+
+    <div class="deg-item"><div class="term">x³y</div><div class="deg">3+1 = 4</div></div>
+
+    <div class="deg-item"><div class="term">x²y²</div><div class="deg">2+2 = 4</div></div>
+
+  </div>
+
+  <div class="highlight-box"><p><strong>Important:</strong> If all terms have the <em>same total degree</em>, the function is called a <strong>Homogeneous Function</strong>.</p></div>
+
+</div>
+
+<hr class="theory-divider">
+
+<div class="theory-block">
+
+  <h3>2. Homogeneous Function</h3>
+
+  <p>f(x, y) is <strong>homogeneous of degree n</strong> if for any scalar t:</p>
+
+  <div class="formula-box">f(tx, ty) = tⁿ · f(x, y)</div>
+
+  <p><strong>Example:</strong> f(x,y) = x² + 2xy + y²</p>
+
+  <div class="formula-box small">f(tx,ty) = t²x² + 2t²xy + t²y² = t²(x²+2xy+y²) = t²·f(x,y)  ✓</div>
+
+</div>
+
+<hr class="theory-divider">
+
+<div class="theory-block">
+
+  <h3>3. Euler's Theorem</h3>
+
+  <div class="highlight-box"><p>If f(x,y) is homogeneous of degree n with continuous partial derivatives:</p></div>
+
+  <div class="formula-box">x · (∂f/∂x) + y · (∂f/∂y) = n · f(x, y)</div>
+
+  <p>For <strong>three variables</strong>:</p>
+
+  <div class="formula-box">x · (∂f/∂x) + y · (∂f/∂y) + z · (∂f/∂z) = n · f(x, y, z)</div>
+
+</div>
+
+<hr class="theory-divider">
+
+<div class="theory-block">
+
+  <h3>4. Step-by-Step Example</h3>
+
+  <p><strong>f(x,y) = x² + y²</strong></p>
+
+  <div class="step-box"><div class="step-num">Step 1 — Degree</div><p>Both terms have degree 2 → <strong>n = 2</strong></p></div>
+
+  <div class="step-box"><div class="step-num">Step 2 — Partial Derivatives</div><p>∂f/∂x = 2x &nbsp;|&nbsp; ∂f/∂y = 2y</p></div>
+
+  <div class="step-box"><div class="step-num">Step 3 — Euler's Sum</div><p>x(2x) + y(2y) = 2x² + 2y²</p></div>
+
+  <div class="step-box"><div class="step-num">Step 4 — Verify</div><p>n·f = 2(x²+y²) = 2x²+2y² <span class="check-badge">✔ Verified</span></p></div>
+
+</div>
+
+<hr class="theory-divider">
+
+<div class="theory-block">
+
+  <h3>5. Second Order Formula</h3>
+
+  <div class="formula-box">x²·(∂²f/∂x²) + 2xy·(∂²f/∂x∂y) + y²·(∂²f/∂y²) = n(n–1)·f(x,y)</div>
+
+</div>
+
+<hr class="theory-divider">
+
+<div class="theory-block">
+
+  <h3>6. Examples by Degree</h3>
+
+  <div class="case-grid">
+
+    <div class="case-card"><h4>Degree 1</h4><p>f = ax + by</p><div class="formula">x·a + y·b = 1·f</div></div>
+
+    <div class="case-card"><h4>Degree 2</h4><p>f = x²+xy+y²</p><div class="formula">x·fx + y·fy = 2f</div></div>
+
+    <div class="case-card"><h4>Degree 3</h4><p>f = x³+y³</p><div class="formula">x·fx + y·fy = 3f</div></div>
+
+    <div class="case-card"><h4>Fractional</h4><p>f = √(x²+y²)</p><div class="formula">x·fx + y·fy = 1·f</div></div>
+
+  </div>
+
+</div>
+
+<hr class="theory-divider">
+
+<div class="theory-block">
+
+  <h3>7. Quick Exam Summary</h3>
+
+  <table class="summary-table">
+
+    <tr><th>Concept</th><th>Formula</th></tr>
+
+    <tr><td>Homogeneous function</td><td>f(tx,ty) = tⁿ·f(x,y)</td></tr>
+
+    <tr><td>Euler's Theorem (1st order)</td><td><code>x·fx + y·fy = n·f</code></td></tr>
+
+    <tr><td>Euler's Theorem (2nd order)</td><td><code>x²·fxx + 2xy·fxy + y²·fyy = n(n–1)·f</code></td></tr>
+
+    <tr><td>3-variable form</td><td><code>x·fx + y·fy + z·fz = n·f</code></td></tr>
+
+  </table>
+
+</div>
+
+<hr class="theory-divider">
+
+<div class="theory-block">
+
+  <h3>8. Conclusion</h3>
+
+  <div class="highlight-box"><p>Euler's theorem simplifies calculations involving homogeneous functions by directly connecting them to their partial derivatives — a key result in Engineering Mathematics.</p></div>
+
+</div>
+
+</template>
+
+<template id="tpl-pretest">
+
+<div class="marking-scheme-box">
+
+  <h3>⭐ Marking Scheme</h3>
+
+  <div class="mark-rule"><span class="mark-badge green">+1 Mark</span><p>Correct answer on attempt 1, 2, or 3 <strong>without</strong> a hint.</p></div>
+
+  <div class="mark-rule"><span class="mark-badge orange">0 Marks</span><p>Correct answer <strong>after</strong> taking a hint — "Congratulations!" shown, no mark awarded.</p></div>
+
+  <div class="mark-rule"><span class="mark-badge red">0 Marks</span><p>All 3 attempts used, hint declined or still wrong after hint.</p></div>
+
+</div>
+
+<div class="quiz-score" id="pre-score" style="display:none;"></div>
+
+<div id="pretest-container"></div>
+
+</template>
+
+<template id="tpl-simulation">
+
+<div class="sim-wrap">
+
+  <div style="display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
+
+    <button class="sim-btn" id="sim-verify-btn" onclick="simTab('verify')" style="padding:8px 18px;font-size:13px;">Verify Euler's Theorem</button>
+
+    <button class="sim-btn" id="sim-partial-btn" onclick="simTab('partial')" style="padding:8px 18px;font-size:13px;background:linear-gradient(to right,#7f8c8d,#555);">Find Partial Derivatives</button>
+
+  </div>
+
+  <!-- VERIFY TAB -->
+
+  <div id="sim-verify">
+
+    <div class="var-toggle">
+
+      <span style="font-size:12px;color:#7f8c8d;align-self:center;">Variables:</span>
+
+      <button class="vt-btn active" id="vv2" onclick="setSimVars(2,'v')">x, y</button>
+
+      <button class="vt-btn" id="vv3" onclick="setSimVars(3,'v')">x, y, z</button>
+
+    </div>
+
+    <div class="examples-row">
+
+      <span>Examples:</span>
+
+      <button class="ex-btn" onclick="loadSim('x^2 + 2*x*y + y^2',2,'v')">x²+2xy+y²</button>
+
+      <button class="ex-btn" onclick="loadSim('x^3 + y^3',3,'v')">x³+y³</button>
+
+      <button class="ex-btn" onclick="loadSim('Math.sqrt(x*x + y*y)',1,'v')">√(x²+y²)</button>
+
+      <button class="ex-btn" onclick="loadSim('x^2*y + x*y^2',3,'v')">x²y+xy²</button>
+
+    </div>
+
+    <div id="vv3-examples" style="display:none;" class="examples-row">
+
+      <span>3-var:</span>
+
+      <button class="ex-btn" onclick="loadSim('x^2 + y^2 + z^2',2,'v')">x²+y²+z²</button>
+
+      <button class="ex-btn" onclick="loadSim('x^3 + y^3 + z^3',3,'v')">x³+y³+z³</button>
+
+      <button class="ex-btn" onclick="loadSim('x*y*z',3,'v')">xyz</button>
+
+    </div>
+
+    <div class="sim-controls">
+
+      <div class="sim-field">
+
+        <label>f(x, y<span id="v-zlabel"></span>) =</label>
+
+        <input type="text" id="v-fn" placeholder="e.g. x^2 + 2*x*y + y^2">
+
+        <div class="sim-hint">Use x, y, z | Ops: + – * ^ / | sqrt()</div>
+
+      </div>
+
+      <div class="sim-field">
+
+        <label>Degree n</label>
+
+        <input type="number" id="v-deg" value="2" min="-10" max="20">
+
+      </div>
+
+    </div>
+
+    <button class="sim-btn" onclick="runVerify()">▶ Verify</button>
+
+    <div class="result-box" id="verify-result"></div>
+
+  </div>
+
+  <!-- PARTIAL DERIVATIVES TAB -->
+
+  <div id="sim-partial" style="display:none;">
+
+    <div class="var-toggle">
+
+      <span style="font-size:12px;color:#7f8c8d;align-self:center;">Variables:</span>
+
+      <button class="vt-btn active" id="pv2" onclick="setSimVars(2,'p')">x, y</button>
+
+      <button class="vt-btn" id="pv3" onclick="setSimVars(3,'p')">x, y, z</button>
+
+    </div>
+
+    <div style="background:#e8f4fc;border:1px solid #b8d4f0;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#2c3e50;">
+
+      💡 <strong>Symbolic mode:</strong> Enter a polynomial function to get exact symbolic partial derivatives in terms of variables (x, y, z).
+
+    </div>
+
+    <div class="examples-row">
+
+      <span>Examples:</span>
+
+      <button class="ex-btn" onclick="loadSim('x^3 + 3*x*y^2','','p')">x³+3xy²</button>
+
+      <button class="ex-btn" onclick="loadSim('x^2*y + y^3','','p')">x²y+y³</button>
+
+      <button class="ex-btn" onclick="loadSim('x^2 + 2*x*y + y^2','','p')">x²+2xy+y²</button>
+
+      <button class="ex-btn" onclick="loadSim('x^3*y + x*y^3','','p')">x³y+xy³</button>
+
+      <button class="ex-btn" onclick="loadSim('x^4 + 2*x^2*y^2 + y^4','','p')">x⁴+2x²y²+y⁴</button>
+
+    </div>
+
+    <div id="p3-examples" class="examples-row" style="display:none;">
+
+      <span>3-var:</span>
+
+      <button class="ex-btn" onclick="loadSim('x^2 + y^2 + z^2','','p')">x²+y²+z²</button>
+
+      <button class="ex-btn" onclick="loadSim('x^3 + y^3 + z^3','','p')">x³+y³+z³</button>
+
+      <button class="ex-btn" onclick="loadSim('x^2*y + y^2*z + z^2*x','','p')">x²y+y²z+z²x</button>
+
+    </div>
+
+    <div class="sim-controls">
+
+      <div class="sim-field">
+
+        <label>f(x, y<span id="p-zlabel"></span>) =</label>
+
+        <input type="text" id="p-fn" placeholder="e.g. x^3 + 3*x*y^2">
+
+        <div class="sim-hint">Polynomial terms only | Use: x^2, x*y, y^3, z^2 etc.</div>
+
+      </div>
+
+    </div>
+
+    <button class="sim-btn" onclick="runPartial()">🔢 Compute Symbolic Derivatives</button>
+
+    <div class="result-box" id="partial-result"></div>
+
+  </div>
+
+</div>
+
+</template>
+
+<template id="tpl-posttest">
+
+<div class="marking-scheme-box">
+
+  <h3>⭐ Marking Scheme</h3>
+
+  <div class="mark-rule"><span class="mark-badge green">+1 Mark</span><p>Correct answer on attempt 1, 2, or 3 <strong>without</strong> a hint.</p></div>
+
+  <div class="mark-rule"><span class="mark-badge orange">0 Marks</span><p>Correct answer <strong>after</strong> taking a hint — "Congratulations!" shown, no mark awarded.</p></div>
+
+  <div class="mark-rule"><span class="mark-badge red">0 Marks</span><p>All 3 attempts used, hint declined or still wrong after hint.</p></div>
+
+</div>
+
+<div class="quiz-score" id="post-score" style="display:none;"></div>
+
+<div id="posttest-container"></div>
+
+</template>
+
+<template id="tpl-references">
+
+<ul class="ref-list">
+
+  <li><span style="color:#3498db;font-size:20px;">📖</span><div><strong>Higher Engineering Mathematics</strong> — B. S. Grewal, Khanna Publishers.<br><span style="font-size:12px;color:#7f8c8d;">Chapter on Partial Differentiation — Euler's Theorem.</span></div></li>
+
+  <li><span style="color:#3498db;font-size:20px;">📖</span><div><strong>Advanced Engineering Mathematics</strong> — Erwin Kreyszig, Wiley.<br><span style="font-size:12px;color:#7f8c8d;">Partial Derivatives, Homogeneous Functions, and Applications.</span></div></li>
+
+  <li><span style="color:#3498db;font-size:20px;">📖</span><div><strong>Calculus: Early Transcendentals</strong> — James Stewart, Cengage.<br><span style="font-size:12px;color:#7f8c8d;">Multivariable Calculus — Partial Derivatives.</span></div></li>
+
+  <li><span style="color:#3498db;font-size:20px;">🌐</span><div><strong>NPTEL — Engineering Mathematics</strong><br><a href="https://nptel.ac.in" target="_blank">https://nptel.ac.in</a></div></li>
+
+  <li><span style="color:#3498db;font-size:20px;">🌐</span><div><strong>Khan Academy — Multivariable Calculus</strong><br><a href="https://www.khanacademy.org/math/multivariable-calculus" target="_blank">khanacademy.org/math/multivariable-calculus</a></div></li>
+
+  <li style="flex-direction:column;align-items:flex-start;gap:14px;border-bottom:none;padding-top:8px;">
+
+    <div style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#2c3e50;">
+
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="22" height="22" fill="#e74c3c"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597C14.933 166.95 14.933 256 14.933 256s0 89.05 11.412 131.917c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821C561.067 345.05 561.067 256 561.067 256s0-89.05-11.412-131.917zM232.145 337.591V175.185l142.739 81.205-142.739 81.201z"/></svg>
+
+      Video Lectures
+
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;width:100%;">
+
+      <div>
+
+        <p style="font-size:13px;font-weight:600;color:#2c3e50;margin-bottom:8px;">1. Euler's Theorem — Concept &amp; Proof</p>
+
+        <div style="position:relative;padding-bottom:56.25%;height:0;border-radius:10px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.13);">
+
+          <iframe src="https://www.youtube.com/embed/bTs7ncA_AtY" title="Euler's Theorem Video 1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe>
+
+        </div>
+
+      </div>
+
+      <div>
+
+        <p style="font-size:13px;font-weight:600;color:#2c3e50;margin-bottom:8px;">2. Homogeneous Functions &amp; Applications</p>
+
+        <div style="position:relative;padding-bottom:56.25%;height:0;border-radius:10px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.13);">
+
+          <iframe src="https://www.youtube.com/embed/eTp5wq-cSXY" title="Homogeneous Functions Video 2" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </li>
+
+</ul>
+
+</template>
+
+<template id="tpl-contributors">
+
+<div style="margin-bottom:22px;">
+
+  <h3 style="color:#2c3e50;font-size:16px;margin-bottom:12px;">💻 Developers</h3>
+
+  <div class="contrib-grid">
+
+    <div class="contrib-card"><div class="contrib-avatar">SV</div><h4>Shivendra Varute</h4><p>Developer</p><p style="font-size:11px;color:#3498db;margin-top:4px;">Applied Sciences Dept.</p><p style="font-size:11px;color:#7f8c8d;margin-top:2px;">shivendra.varute25@pccoepune.org</p></div>
+
+    <div class="contrib-card"><div class="contrib-avatar">AB</div><h4>Anushk Bandre</h4><p>Developer</p><p style="font-size:11px;color:#3498db;margin-top:4px;">Applied Sciences Dept.</p><p style="font-size:11px;color:#7f8c8d;margin-top:2px;">anushk.bandre25@pccoepune.org</p></div>
+
+    <div class="contrib-card"><div class="contrib-avatar">AM</div><h4>Aakanksh Muley</h4><p>Developer</p><p style="font-size:11px;color:#3498db;margin-top:4px;">Applied Sciences Dept.</p><p style="font-size:11px;color:#7f8c8d;margin-top:2px;">aakanksh.muley25@pccoepune.org</p></div>
+
+  </div>
+
+</div>
+
+<div>
+
+  <h3 style="color:#2c3e50;font-size:16px;margin-bottom:12px;">🏫 Guide</h3>
+
+  <div class="contrib-grid" style="grid-template-columns:minmax(190px,300px);">
+
+    <div class="contrib-card" style="border-top:3px solid #f39c12;">
+
+      <div class="contrib-avatar" style="background:linear-gradient(135deg,#f39c12,#e67e22);">GT</div>
+
+      <h4>Prof. Ganesh Tarte</h4><p>Project Guide</p>
+
+      <p style="font-size:11px;color:#f39c12;margin-top:4px;">Applied Sciences &amp; Humanities Dept.</p>
+
+      <p style="font-size:11px;color:#7f8c8d;margin-top:2px;">Pimpri Chinchwad College of Engineering</p>
+
+    </div>
+
+  </div>
+
+</div>
+
+</template>
+
+<template id="tpl-feedback">
+
+<div class="feedback-form">
+
+  <div style="background:#f0f7ff;border-left:4px solid #3498db;border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:#2c3e50;">
+
+    📧 Feedback is sent directly to <strong>anushk.bandre25@pccoepune.org</strong>.
+
+  </div>
+
+  <div class="fb-field"><label>Your Name</label><input type="text" id="fb-name" placeholder="Enter your name"></div>
+
+  <div class="fb-field"><label>Your Roll Number</label><input type="text" id="fb-roll" placeholder="e.g. 22CS101"></div>
+
+  <div class="fb-field">
+
+    <label>Rate this experiment</label>
+
+    <div class="star-row" id="stars">
+
+      <span class="star" data-v="1">&#9733;</span><span class="star" data-v="2">&#9733;</span>
+
+      <span class="star" data-v="3">&#9733;</span><span class="star" data-v="4">&#9733;</span>
+
+      <span class="star" data-v="5">&#9733;</span>
+
+    </div>
+
+  </div>
+
+  <div class="fb-field">
+
+    <label>How clear was the theory?</label>
+
+    <select id="fb-clarity">
+
+      <option value="">— Select —</option>
+
+      <option>Very clear</option><option>Clear</option>
+
+      <option>Somewhat clear</option><option>Confusing</option>
+
+    </select>
+
+  </div>
+
+  <div class="fb-field"><label>Comments / Suggestions</label><textarea id="fb-comments" placeholder="Share your experience..."></textarea></div>
+
+  <button class="fb-submit" onclick="submitFeedback()">✈ &nbsp;Send Feedback</button>
+
+  <div class="fb-success" id="fb-success">✅ &nbsp;Feedback sent successfully! Thank you.</div>
+
+</div>
+
+</template>
+
 <script>
-// ─── State ───────────────────────────────────────────
-let q_actual = null, q1_actual = null, T_actual = null;
-let attAttempts = {1:0, 2:0, 3:0};
-let starRating = 0;
 
-// ─── Stars ───────────────────────────────────────────
-document.querySelectorAll('#stars span').forEach(s => {
-  s.addEventListener('click', () => {
-    starRating = +s.dataset.v;
-    document.querySelectorAll('#stars span').forEach((x, i) => {
-      x.classList.toggle('lit', i < starRating);
+// ══════════ AUTH ══════════
+
+function getUsers(){try{return JSON.parse(localStorage.getItem('vlab_users')||'{}');}catch(e){return{};}}
+
+function saveUsers(u){localStorage.setItem('vlab_users',JSON.stringify(u));}
+
+function getCurrentUser(){try{return JSON.parse(localStorage.getItem('vlab_current')||'null');}catch(e){return null;}}
+
+function setCurrentUser(u){if(u)localStorage.setItem('vlab_current',JSON.stringify(u));else localStorage.removeItem('vlab_current');}
+
+function getUserProgress(roll){try{return JSON.parse(localStorage.getItem('vlab_prog_'+roll)||'{}');}catch(e){return{};}}
+
+function saveUserProgress(roll,d){localStorage.setItem('vlab_prog_'+roll,JSON.stringify(d));}
+
+let currentUser=getCurrentUser();
+
+function renderHeader(){
+
+  const hr=document.getElementById('headerRight');
+
+  if(currentUser){
+
+    const ini=currentUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+
+    hr.innerHTML=`
+
+      <div class="user-chip" onclick="toggleDD()">
+
+        <div class="user-avatar">${ini}</div>
+
+        <span class="uname">${currentUser.name.split(' ')[0]}</span>
+
+        <span style="font-size:10px;">▼</span>
+
+      </div>
+
+      <div class="user-dropdown" id="userDD">
+
+        <a onclick="openDashboard()">📊 My Dashboard</a>
+
+        <hr>
+
+        <a onclick="doLogout()" class="logout">🚪 Sign Out</a>
+
+      </div>`;
+
+  } else {
+
+    hr.innerHTML=`
+
+      <button class="auth-btn btn-login" onclick="openAuth('login')">Sign In</button>
+
+      <button class="auth-btn btn-signup" onclick="openAuth('signup')">Sign Up</button>`;
+
+  }
+
+  updateAllStatuses();
+
+}
+
+function toggleDD(){const dd=document.getElementById('userDD');if(dd)dd.classList.toggle('open');}
+
+document.addEventListener('click',e=>{
+
+  const dd=document.getElementById('userDD');
+
+  if(dd&&!e.target.closest('.user-chip')&&!e.target.closest('.user-dropdown'))dd.classList.remove('open');
+
+});
+
+function openAuth(tab){hideAlert('login-alert');hideAlert('signup-alert');document.getElementById('authModal').classList.add('open');switchTab(tab);}
+
+function closeAuth(){document.getElementById('authModal').classList.remove('open');}
+
+function switchTab(tab){
+
+  hideAlert('login-alert');hideAlert('signup-alert');
+
+  ['login','signup'].forEach(t=>{
+
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+
+    document.getElementById('form-'+t).classList.toggle('active',t===tab);
+
+  });
+
+}
+
+function showAlert(id,msg){const el=document.getElementById(id);if(!el)return;if(msg){const m=document.getElementById(id+'-msg');if(m)m.textContent=msg;}el.classList.add('show');}
+
+function hideAlert(id){const el=document.getElementById(id);if(el)el.classList.remove('show');}
+
+function se(id,show){const el=document.getElementById(id);if(el)el.style.display=show?'block':'none';}
+
+function doLogin(){
+
+  const id=document.getElementById('login-id').value.trim().toLowerCase();
+
+  const pw=document.getElementById('login-pass').value;
+
+  hideAlert('login-alert');
+
+  const users=getUsers();const u=users[id];
+
+  if(!id||!pw){showAlert('login-alert','Please enter your roll number and password.');return;}
+
+  if(!u){showAlert('login-alert','No account found for this roll number. Please sign up first.');return;}
+
+  if(u.password!==pw){showAlert('login-alert','Incorrect password. Please try again.');return;}
+
+  currentUser={name:u.name,roll:u.roll};setCurrentUser(currentUser);closeAuth();renderHeader();
+
+}
+
+function doSignup(){
+
+  const name=document.getElementById('su-name').value.trim();
+
+  const roll=document.getElementById('su-roll').value.trim();
+
+  const pw=document.getElementById('su-pass').value;
+
+  const pw2=document.getElementById('su-pass2').value;
+
+  hideAlert('signup-alert');
+
+  ['su-name-err','su-roll-err','su-roll-dup','su-pass-err','su-pass2-err'].forEach(id=>se(id,false));
+
+  let ok=true;
+
+  if(!name){se('su-name-err',true);ok=false;}
+
+  if(!roll){se('su-roll-err',true);ok=false;}
+
+  if(pw.length<6){se('su-pass-err',true);ok=false;}
+
+  if(pw!==pw2){se('su-pass2-err',true);ok=false;}
+
+  if(!ok)return;
+
+  const users=getUsers();const key=roll.toLowerCase();
+
+  if(users[key]){se('su-roll-dup',true);showAlert('signup-alert','An account with roll number "'+roll+'" already exists. Please sign in instead.');return;}
+
+  users[key]={name,roll,password:pw};saveUsers(users);
+
+  currentUser={name,roll};setCurrentUser(currentUser);closeAuth();renderHeader();
+
+}
+
+function doLogout(){currentUser=null;setCurrentUser(null);renderHeader();}
+
+// ══════════ PROGRESS ══════════
+
+const allSections=['aim','theory','pretest','simulation','posttest','references','contributors','feedback'];
+
+const sLabels={aim:'Aim',theory:'Theory',pretest:'Pretest',simulation:'Simulation',posttest:'Posttest',references:'References',contributors:'Contributors',feedback:'Feedback'};
+
+function markVisited(s){
+
+  if(!currentUser)return;
+
+  const p=getUserProgress(currentUser.roll);
+
+  if(!p.visited)p.visited={};p.visited[s]=true;
+
+  saveUserProgress(currentUser.roll,p);updateAllStatuses();
+
+}
+
+function saveScore(s,score,total){
+
+  if(!currentUser)return;
+
+  const p=getUserProgress(currentUser.roll);
+
+  if(!p.scores)p.scores={};
+
+  p.scores[s]={score,total,date:new Date().toLocaleDateString()};
+
+  saveUserProgress(currentUser.roll,p);
+
+}
+
+function updateAllStatuses(){
+
+  const p=currentUser?getUserProgress(currentUser.roll):{};
+
+  allSections.forEach(s=>{
+
+    const el=document.getElementById('st-'+s);if(!el)return;
+
+    const v=p.visited&&p.visited[s];const sc=p.scores&&p.scores[s];
+
+    if(sc){el.textContent=sc.score+'/'+sc.total+' marks';el.className='card-status status-done';}
+
+    else if(v){el.textContent='Visited';el.className='card-status status-visited';}
+
+    else{el.textContent='Not Started';el.className='card-status status-not';}
+
+  });
+
+}
+
+// ══════════ SECTION MODAL ══════════
+
+let simVarsV=2,simVarsP=2;
+
+function openSection(name){
+
+  markVisited(name);
+
+  document.getElementById('modalTitle').textContent=sLabels[name];
+
+  const tpl=document.getElementById('tpl-'+name);
+
+  document.getElementById('modalBody').innerHTML=tpl?tpl.innerHTML:'<p>Content coming soon.</p>';
+
+  const modal=document.getElementById('sectionModal');
+
+  modal.classList.add('open');modal.scrollTop=0;
+
+  if(name==='pretest'){window._quizState={};buildAssessment(preQuestions,'pre');}
+
+  if(name==='posttest'){window._quizState={};buildAssessment(postQuestions,'post');}
+
+  if(name==='feedback')initStars();
+
+}
+
+function closeSection(){document.getElementById('sectionModal').classList.remove('open');}
+
+['sectionModal','authModal','dashModal'].forEach(id=>{
+
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+});
+
+// ══════════ DASHBOARD ══════════
+
+function openDashboard(){
+
+  const dd=document.getElementById('userDD');if(dd)dd.classList.remove('open');
+
+  if(!currentUser)return;
+
+  const p=getUserProgress(currentUser.roll);
+
+  const visited=p.visited||{};const scores=p.scores||{};
+
+  const vc=Object.keys(visited).length;
+
+  let ts=0,tp=0;
+
+  if(scores.pretest){ts+=scores.pretest.score;tp+=scores.pretest.total;}
+
+  if(scores.posttest){ts+=scores.posttest.score;tp+=scores.posttest.total;}
+
+  let topicsHTML='';
+
+  allSections.forEach(s=>{
+
+    const v=visited[s];const sc=scores[s];
+
+    let pill,status;
+
+    if(sc){pill='pill-done';status=sc.score+'/'+sc.total+' marks';}
+
+    else if(v){pill='pill-visited';status='Visited';}
+
+    else{pill='pill-not';status='Not started';}
+
+    topicsHTML+=`<li><span>${sLabels[s]}</span><span class="pill ${pill}">${status}</span></li>`;
+
+  });
+
+  document.getElementById('dashBody').innerHTML=`
+
+    <p style="margin-bottom:6px;color:#7f8c8d;font-size:14px;">Welcome, <strong style="color:#2c3e50;">${currentUser.name}</strong> &nbsp;·&nbsp; Roll: ${currentUser.roll}</p>
+
+    <div class="dash-grid" style="margin-top:16px;">
+
+      <div class="dash-card">
+
+        <h4>Progress</h4>
+
+        <div class="score-big">${vc}<span style="font-size:18px;color:#aaa;font-weight:400;">/${allSections.length}</span></div>
+
+        <div class="score-label">Sections visited</div>
+
+        <div class="prog-bar"><div class="prog-bar-fill" style="width:${Math.round(vc/allSections.length*100)}%;"></div></div>
+
+      </div>
+
+      <div class="dash-card">
+
+        <h4>Assessment Scores</h4>
+
+        <div class="score-row">
+
+          <div class="score-box blue"><div class="val">${scores.pretest?scores.pretest.score+'/'+scores.pretest.total:'—'}</div><div class="lbl">Pretest</div></div>
+
+          <div class="score-box green"><div class="val">${scores.posttest?scores.posttest.score+'/'+scores.posttest.total:'—'}</div><div class="lbl">Posttest</div></div>
+
+        </div>
+
+        ${tp>0?`<div style="margin-top:12px;font-size:13px;color:#555;">Combined: <strong>${ts}/${tp}</strong> marks (${Math.round(ts/tp*100)}%)</div>`:'<div style="margin-top:12px;font-size:12px;color:#aaa;">Complete Pretest and Posttest to see combined score.</div>'}
+
+      </div>
+
+    </div>
+
+    <div class="dash-card">
+
+      <h4>Topic Status</h4>
+
+      <ul class="progress-list">${topicsHTML}</ul>
+
+    </div>`;
+
+  document.getElementById('dashModal').classList.add('open');
+
+}
+
+// ══════════════════════════════════════════════════════
+
+// QUIZ DATA — 10 questions each (5 original + 5 new tougher)
+
+// ══════════════════════════════════════════════════════
+
+const preQuestions=[
+
+  // ── Original 5 ──
+
+  {q:"Which is a homogeneous function of degree 2?",
+
+   opts:["x² + y²","x³ + y","x + y + 1","ln(x/y)"],ans:0,
+
+   hint:"All terms must have the same degree. x²+y² has all terms of degree 2.",
+
+   hintFormula:"x²: degree 2, y²: degree 2 → homogeneous of degree 2"},
+
+  {q:"If f(x,y) = x³ + y³, the degree of homogeneity is:",
+
+   opts:["1","2","3","0"],ans:2,
+
+   hint:"f(tx,ty) = t³(x³+y³) = t³·f(x,y) → n = 3.",
+
+   hintFormula:"f(tx,ty) = t³·f(x,y)  →  n = 3"},
+
+  {q:"Euler's Theorem states that for homogeneous f of degree n:",
+
+   opts:["x·fx + y·fy = f","x·fx + y·fy = nf","fx + fy = nf","x²·fx + y²·fy = nf"],ans:1,
+
+   hint:"Each variable times its own partial derivative, sum equals n×f.",
+
+   hintFormula:"x·(∂f/∂x) + y·(∂f/∂y) = n·f(x,y)"},
+
+  {q:"f(x,y) = √(x² + y²) is homogeneous of degree:",
+
+   opts:["0","½","1","2"],ans:2,
+
+   hint:"f(tx,ty) = √(t²x²+t²y²) = t·f(x,y) → degree 1.",
+
+   hintFormula:"f(tx,ty) = t¹·f(x,y)  →  n = 1"},
+
+  {q:"∂/∂x (x² + 2xy) = ?",
+
+   opts:["2x","2x + 2y","2y","x + 2y"],ans:1,
+
+   hint:"Treat y as constant: ∂/∂x(x²)=2x, ∂/∂x(2xy)=2y.",
+
+   hintFormula:"∂/∂x(x² + 2xy) = 2x + 2y"},
+
+  // ── 5 New Tougher Questions ──
+
+  {q:"If u = sin⁻¹((x² + y²)/(x + y)), which expression is correct according to Euler's theorem?",
+
+   opts:["x·ux + y·uy = sin(u)","x·ux + y·uy = u","x·ux + y·uy = tan(u)","x·ux + y·uy = 2u"],ans:0,
+
+   hint:"Let f = (x²+y²)/(x+y). Then f is homogeneous of degree 1 and u = sin⁻¹(f). For composite functions, x·ux + y·uy = n·f = n·sin(u).",
+
+   hintFormula:"n=1: x·ux + y·uy = 1·f = sin(u)"},
+
+  {q:"For f(x,y) = (x³ + y³)/(x + y), what is the value of x·∂f/∂x + y·∂f/∂y?",
+
+   opts:["f","2f","3f","0"],ans:1,
+
+   hint:"Degree of numerator = 3, degree of denominator = 1. So f is homogeneous of degree 3−1 = 2.",
+
+   hintFormula:"Degree = 3 − 1 = 2  →  x·fx + y·fy = 2f"},
+
+  {q:"The second order Euler's formula gives x²·fxx + 2xy·fxy + y²·fyy = ?",
+
+   opts:["n·f","n(n+1)·f","n(n−1)·f","(n−1)·f"],ans:2,
+
+   hint:"This is the second-order extension of Euler's theorem.",
+
+   hintFormula:"x²·fxx + 2xy·fxy + y²·fyy = n(n−1)·f"},
+
+  {q:"If f(x,y) = x² ln(y/x), then f is:",
+
+   opts:["Homogeneous of degree 2","Homogeneous of degree 1","Not homogeneous","Homogeneous of degree 0"],ans:0,
+
+   hint:"f(tx,ty) = t²x² · ln(ty/tx) = t²x² · ln(y/x) = t²·f(x,y). The ln(y/x) part has degree 0.",
+
+   hintFormula:"f(tx,ty) = t² · x² · ln(y/x) = t²·f(x,y)  →  n=2"},
+
+  {q:"If u = f(x,y) is homogeneous of degree n, and v = ln(u), then x·vx + y·vy equals:",
+
+   opts:["n","n·v","n/u","n·u"],ans:0,
+
+   hint:"v = ln(u), so vx = ux/u, vy = uy/u. Then x·vx + y·vy = (x·ux + y·uy)/u = n·u/u = n.",
+
+   hintFormula:"x·vx + y·vy = (x·ux + y·uy)/u = n·u/u = n"}
+
+];
+
+const postQuestions=[
+
+  // ── Original 5 ──
+
+  {q:"For f(x,y,z)=x³+y³+z³, Euler's theorem gives:",
+
+   opts:["fx+fy+fz=3f","x·fx+y·fy+z·fz=3f","x·fx+y·fy+z·fz=f","x·fx+y·fy=3f"],ans:1,
+
+   hint:"3-var homogeneous function of degree 3. Use 3-variable form.",
+
+   hintFormula:"x·fx + y·fy + z·fz = n·f  (n=3)"},
+
+  {q:"If f(tx,ty) = t⁴·f(x,y), then n =",
+
+   opts:["1","2","3","4"],ans:3,
+
+   hint:"Definition: f(tx,ty) = tⁿ·f(x,y). Read the power of t.",
+
+   hintFormula:"f(tx,ty) = t⁴·f(x,y)  →  n = 4"},
+
+  {q:"f(x,y) = x²y + xy² is homogeneous of degree:",
+
+   opts:["2","3","4","1"],ans:1,
+
+   hint:"x²y: degree 3, xy²: degree 3. All same → degree 3.",
+
+   hintFormula:"All terms have degree 3  →  n = 3"},
+
+  {q:"Which is NOT a homogeneous function?",
+
+   opts:["x²+xy","x³+y³","x+y+1","x²y"],ans:2,
+
+   hint:"Constant '1' has degree 0, breaking homogeneity.",
+
+   hintFormula:"f(tx,ty) = tx+ty+1 ≠ tⁿ(x+y+1)"},
+
+  {q:"For f(x,y)=x²+2xy+y², x·∂f/∂x + y·∂f/∂y = ?",
+
+   opts:["f","2f","3f","0"],ans:1,
+
+   hint:"∂f/∂x=2x+2y, ∂f/∂y=2x+2y. x(2x+2y)+y(2x+2y)=2f.",
+
+   hintFormula:"= 2(x²+2xy+y²) = 2f"},
+
+  // ── 5 New Tougher Questions ──
+
+  {q:"If u = tan⁻¹((x³ + y³)/(x² − xy + y²)), which statement is correct?",
+
+   opts:["x·ux + y·uy = sin(2u)/2","x·ux + y·uy = sin(u)","x·ux + y·uy = u","x·ux + y·uy = 2·tan(u)"],ans:0,
+
+   hint:"Let f = (x³+y³)/(x²−xy+y²). Degree of numerator = 3, denominator = 2, so f has degree 1. Then u = tan⁻¹(f) gives x·ux + y·uy = n·f·(1/(1+f²)) = sin(u)cos(u) = sin(2u)/2.",
+
+   hintFormula:"n=1: x·ux + y·uy = sin(u)·cos(u) = sin(2u)/2"},
+
+  {q:"For f(x,y) = x⁴ + x²y² + y⁴, the value of x²·fxx + 2xy·fxy + y²·fyy is:",
+
+   opts:["4f","12f","6f","8f"],ans:1,
+
+   hint:"f is homogeneous of degree 4. Apply second-order Euler: n(n−1)·f = 4×3×f = 12f.",
+
+   hintFormula:"n=4: n(n−1)·f = 4·3·f = 12f"},
+
+  {q:"If f(x,y,z) = (x²y + y²z + z²x)/(x + y + z), the degree of f is:",
+
+   opts:["1","2","3","0"],ans:0,
+
+   hint:"Numerator degree = 3 (each term is degree 3). Denominator degree = 1. So f has degree 3−1 = 2. Wait — each term: x²y, y²z, z²x each have degree 3; denominator degree 1. So degree = 2.",
+
+   hintFormula:"degree = 3 (numerator) − 1 (denominator) = 2"},
+
+  {q:"Given u = f(x,y) homogeneous of degree n, which of these correctly applies the deduction for x·(∂²u/∂x²) + y·(∂²u/∂x∂y)?",
+
+   opts:["= (n−1)·∂u/∂x","= n·∂u/∂x","= (n+1)·∂u/∂x","= n(n−1)·u"],ans:0,
+
+   hint:"Differentiate Euler's equation x·ux + y·uy = n·u partially with respect to x. Then x·uxx + y·uxy = (n−1)·ux.",
+
+   hintFormula:"∂/∂x[x·ux + y·uy = n·u]  →  x·uxx + y·uxy = (n−1)·ux"},
+
+  {q:"If f(x,y) = x^a · y^b is homogeneous and satisfies x·fx + y·fy = 5·f, then:",
+
+   opts:["a − b = 5","a + b = 5","a · b = 5","a/b = 5"],ans:1,
+
+   hint:"fx = a·x^(a-1)·y^b, fy = b·x^a·y^(b-1). Then x·fx + y·fy = (a+b)·x^a·y^b = (a+b)·f. So a+b = n = 5.",
+
+   hintFormula:"x·fx + y·fy = (a+b)·f = 5f  →  a+b = 5"}
+
+];
+
+// ══════════ QUIZ ENGINE ══════════
+
+function buildAssessment(questions,prefix){
+
+  const c=document.getElementById(prefix+'test-container');if(!c)return;
+
+  c.innerHTML='';
+
+  questions.forEach((q,qi)=>{
+
+    const div=document.createElement('div');div.className='quiz-question';div.id=`${prefix}-q-${qi}`;
+
+    const dots=[0,1,2].map(i=>`<span class="attempt-dot${i===0?' current':''}" id="${prefix}-dot-${qi}-${i}"></span>`).join('');
+
+    div.innerHTML=`
+
+      <p class="q-text">${qi+1}. ${q.q}</p>
+
+      <div class="attempt-row"><span class="attempt-label">Attempts left:</span><div class="attempt-dots">${dots}</div></div>
+
+      <ul class="quiz-options" id="${prefix}-opts-${qi}">
+
+        ${q.opts.map((o,oi)=>`<li id="${prefix}-li-${qi}-${oi}"><label><input type="radio" name="${prefix}q${qi}" value="${oi}" onchange="handleAnswer('${prefix}',${qi},${oi})">${o}</label></li>`).join('')}
+
+      </ul>
+
+      <div class="q-feedback" id="${prefix}-fb-${qi}"></div>
+
+      <div class="hint-prompt-box" id="${prefix}-hint-prompt-${qi}">
+
+        <p><strong>All 3 attempts used.</strong> Would you like a hint? (Correct after hint = 0 marks)</p>
+
+        <div class="hbtn-row">
+
+          <button class="hint-yes" onclick="showHint('${prefix}',${qi})">💡 Yes, hint</button>
+
+          <button class="hint-no" onclick="skipHint('${prefix}',${qi})">No, skip</button>
+
+        </div>
+
+      </div>
+
+      <div class="hint-content-box" id="${prefix}-hint-box-${qi}">
+
+        <h5>💡 Hint</h5>
+
+        <p>${q.hint}</p><div class="hf">${q.hintFormula}</div>
+
+      </div>`;
+
+    c.appendChild(div);
+
+  });
+
+}
+
+function getState(p,qi){
+
+  if(!window._quizState)window._quizState={};
+
+  const k=p+qi;
+
+  if(!window._quizState[k])window._quizState[k]={attempts:0,hintUsed:false,hintShown:false,done:false,marksAwarded:false};
+
+  return window._quizState[k];
+
+}
+
+function updateDots(p,qi,a){for(let i=0;i<3;i++){const d=document.getElementById(`${p}-dot-${qi}-${i}`);if(!d)continue;d.className='attempt-dot';if(i<a)d.classList.add('used');else if(i===a)d.classList.add('current');}}
+
+function disableOpts(p,qi){document.querySelectorAll(`input[name="${p}q${qi}"]`).forEach(o=>o.disabled=true);}
+
+function showFB(p,qi,type,msg){const el=document.getElementById(`${p}-fb-${qi}`);el.className=`q-feedback ${type}`;el.innerHTML=msg;el.style.display='block';}
+
+function handleAnswer(p,qi,sel){
+
+  const q=(p==='pre'?preQuestions:postQuestions)[qi];
+
+  const st=getState(p,qi);
+
+  if(st.done)return;
+
+  if(st.hintShown&&st.attempts>=3){processAnswer(p,qi,sel,q,st,true);return;}
+
+  if(st.attempts>=3)return;
+
+  processAnswer(p,qi,sel,q,st,false);
+
+}
+
+function processAnswer(p,qi,sel,q,st,isHint){
+
+  st.attempts++;updateDots(p,qi,st.attempts);
+
+  if(sel===q.ans){
+
+    disableOpts(p,qi);
+
+    document.getElementById(`${p}-li-${qi}-${sel}`).classList.add('correct');
+
+    if(st.hintUsed){showFB(p,qi,'correct','🎉 Congratulations! Your answer is correct — but since you used a hint, no marks are awarded.');}
+
+    else{showFB(p,qi,'correct','🎉 Congratulations! Your answer is correct! <strong>+1 mark awarded.</strong>');st.marksAwarded=true;updateScore(p);}
+
+    st.done=true;
+
+  }else{
+
+    document.getElementById(`${p}-li-${qi}-${sel}`).classList.add('wrong');
+
+    document.querySelector(`input[name="${p}q${qi}"][value="${sel}"]`).checked=false;
+
+    if(isHint){disableOpts(p,qi);document.getElementById(`${p}-li-${qi}-${q.ans}`).classList.add('reveal');showFB(p,qi,'neutral','❌ Incorrect again. Correct answer highlighted above.');st.done=true;}
+
+    else if(st.attempts>=3){disableOpts(p,qi);showFB(p,qi,'neutral','❌ Incorrect. All 3 attempts used.');document.getElementById(`${p}-hint-prompt-${qi}`).style.display='block';}
+
+    else{const left=3-st.attempts;showFB(p,qi,'wrong',`❌ Incorrect! Try again. <strong>${left} attempt${left>1?'s':''}</strong> left.`);document.querySelectorAll(`input[name="${p}q${qi}"]`).forEach(o=>o.disabled=false);document.getElementById(`${p}-li-${qi}-${sel}`).classList.remove('wrong');}
+
+  }
+
+}
+
+function showHint(p,qi){
+
+  const st=getState(p,qi);st.hintUsed=true;st.hintShown=true;
+
+  document.getElementById(`${p}-hint-prompt-${qi}`).style.display='none';
+
+  document.getElementById(`${p}-hint-box-${qi}`).style.display='block';
+
+  showFB(p,qi,'info','💡 Hint shown. Try again — correct after hint earns <strong>0 marks</strong>.');
+
+  document.querySelectorAll(`input[name="${p}q${qi}"]`).forEach(o=>o.disabled=false);
+
+}
+
+function skipHint(p,qi){
+
+  const st=getState(p,qi);st.done=true;
+
+  const q=(p==='pre'?preQuestions:postQuestions)[qi];
+
+  document.getElementById(`${p}-hint-prompt-${qi}`).style.display='none';
+
+  document.getElementById(`${p}-li-${qi}-${q.ans}`).classList.add('reveal');
+
+  showFB(p,qi,'neutral','No hint taken. Correct answer highlighted above.');
+
+}
+
+function updateScore(p){
+
+  const qs=p==='pre'?preQuestions:postQuestions;
+
+  const total=qs.length;let score=0;
+
+  qs.forEach((_,qi)=>{if(getState(p,qi).marksAwarded)score++;});
+
+  const sc=document.getElementById(p+'-score');
+
+  if(sc){sc.style.display='block';sc.innerHTML=`📊 Score: <strong>${score}/${total}</strong> (${Math.round(score/total*100)}%)`;}
+
+  saveScore(p==='pre'?'pretest':'posttest',score,total);updateAllStatuses();
+
+}
+
+// ══════════ SIMULATION ══════════
+
+function simTab(t){
+
+  document.getElementById('sim-verify').style.display=t==='verify'?'block':'none';
+
+  document.getElementById('sim-partial').style.display=t==='partial'?'block':'none';
+
+  document.getElementById('sim-verify-btn').style.background=t==='verify'?'linear-gradient(to right,#3498db,#2c80b9)':'linear-gradient(to right,#7f8c8d,#555)';
+
+  document.getElementById('sim-partial-btn').style.background=t==='partial'?'linear-gradient(to right,#3498db,#2c80b9)':'linear-gradient(to right,#7f8c8d,#555)';
+
+}
+
+function setSimVars(n,m){
+
+  if(m==='v'){
+
+    simVarsV=n;
+
+    document.getElementById('vv2').classList.toggle('active',n===2);
+
+    document.getElementById('vv3').classList.toggle('active',n===3);
+
+    document.getElementById('v-zlabel').textContent=n===3?', z':'';
+
+    document.getElementById('vv3-examples').style.display=n===3?'flex':'none';
+
+  }else{
+
+    simVarsP=n;
+
+    document.getElementById('pv2').classList.toggle('active',n===2);
+
+    document.getElementById('pv3').classList.toggle('active',n===3);
+
+    document.getElementById('p-zlabel').textContent=n===3?', z':'';
+
+    const p3ex=document.getElementById('p3-examples');
+
+    if(p3ex)p3ex.style.display=n===3?'flex':'none';
+
+  }
+
+}
+
+function loadSim(fn,deg,m){
+
+  if(m==='v'){document.getElementById('v-fn').value=fn;if(deg!=='')document.getElementById('v-deg').value=deg;}
+
+  else document.getElementById('p-fn').value=fn;
+
+}
+
+function fmt(n){if(!isFinite(n))return '<span style="color:#e74c3c">Err</span>';if(Math.abs(n)<1e-8)return '0';return parseFloat(n.toFixed(5)).toString();}
+
+function pp(e){return e.replace(/\^/g,'').replace(/sqrt\(/g,'Math.sqrt(');}
+
+function showR(el,html,t){el.innerHTML=html;el.style.display='block';el.className='result-box '+t;}
+
+function ef2(e,x,y){try{return Function('x','y','return ('+pp(e)+');')(x,y);}catch(e){return NaN;}}
+
+function ef3(e,x,y,z){try{return Function('x','y','z','return ('+pp(e)+');')(x,y,z);}catch(e){return NaN;}}
+
+function ef(e,x,y,z,i3){return i3?ef3(e,x,y,z):ef2(e,x,y);}
+
+function nd(e,v,x,y,z,i3){const h=1e-6;if(v==='x')return(ef(e,x+h,y,z,i3)-ef(e,x-h,y,z,i3))/(2*h);if(v==='y')return(ef(e,x,y+h,z,i3)-ef(e,x,y-h,z,i3))/(2*h);return(ef(e,x,y,z+h,i3)-ef(e,x,y,z-h,i3))/(2*h);}
+
+function runVerify(){
+
+  const expr=document.getElementById('v-fn').value.trim();
+
+  const n=parseInt(document.getElementById('v-deg').value);
+
+  const out=document.getElementById('verify-result');
+
+  if(!expr){showR(out,'<div style="color:#e74c3c">Please enter a function.</div>','error');return;}
+
+  const is3=simVarsV===3;
+
+  const pts=[[2,3,5],[1,4,2],[3,2,6]];
+
+  let isHom=true;
+
+  for(const[x,y,z]of pts){const t=2.5;const lhs=ef(expr,t*x,t*y,t*z,is3);const rhs=Math.pow(t,n)*ef(expr,x,y,z,is3);if(!isFinite(lhs)||!isFinite(rhs)||Math.abs(lhs-rhs)>1e-3*(Math.abs(rhs)+1)){isHom=false;break;}}
+
+  let h=`<div class="step-item"><div class="step-label">Given</div><div class="step-val">f(${is3?'x,y,z':'x,y'})=<code>${expr}</code> | n=<strong>${n}</strong></div></div>`;
+
+  h+=`<div class="step-item"><div class="step-label">Homogeneity check</div><div class="step-val">`;
+
+  for(const pt of pts.slice(0,2)){const[x,y,z]=pt;const t=2;const lhs=ef(expr,t*x,t*y,t*z,is3);const rhs=Math.pow(t,n)*ef(expr,x,y,z,is3);const ok=isFinite(lhs)&&isFinite(rhs)&&Math.abs(lhs-rhs)<1e-3*(Math.abs(rhs)+1);h+=`(${is3?pt.join(','):[x,y].join(',')}) → f(t·x,…)=${fmt(lhs)}, t<sup>${n}</sup>·f=${fmt(rhs)} <span class="${ok?'badge-ok':'badge-fail'}">${ok?'✓':'✗'}</span><br>`;}
+
+  h+=`<br><strong>${isHom?'✓ Homogeneous of degree '+n:'✗ Not homogeneous of degree '+n}</strong></div></div>`;
+
+  if(!isHom){h+=`<div class="step-item"><div class="step-label">Conclusion</div><div class="step-val"><span class="badge-fail">Theorem does not apply</span></div></div>`;showR(out,h,'error');return;}
+
+  const x=2,y=3,z=5;
+
+  const fx=nd(expr,'x',x,y,z,is3),fy=nd(expr,'y',x,y,z,is3),fz=is3?nd(expr,'z',x,y,z,is3):0;
+
+  const fval=ef(expr,x,y,z,is3),es=x*fx+y*fy+(is3?z*fz:0),nf=n*fval;
+
+  const ok=isFinite(es)&&isFinite(nf)&&Math.abs(es-nf)<1e-3*(Math.abs(nf)+1);
+
+  h+=`<div class="step-item"><div class="step-label">Partials at (${is3?`${x},${y},${z}`:`${x},${y}`})</div><div class="step-val">∂f/∂x=<code>${fmt(fx)}</code> | ∂f/∂y=<code>${fmt(fy)}</code>${is3?` | ∂f/∂z=<code>${fmt(fz)}</code>`:''}</div></div>`;
+
+  h+=`<div class="step-item"><div class="step-label">Euler sum</div><div class="step-val">x·fx+y·fy${is3?'+z·fz':''}=<strong>${fmt(es)}</strong> &nbsp;|&nbsp; n·f=<strong>${fmt(nf)}</strong></div></div>`;
+
+  h+=`<div class="step-item"><div class="step-label">Result</div><div class="step-val"><span class="${ok?'badge-ok':'badge-fail'}">${ok?"✓ Euler's Theorem Verified":"✗ Values don't match"}</span></div></div>`;
+
+  showR(out,h,ok?'success':'error');
+
+}
+
+// ══════════════════════════════════════════════════════════
+
+// SYMBOLIC PARTIAL DERIVATIVES ENGINE
+
+// Parses polynomial expressions and returns exact symbolic results
+
+// ══════════════════════════════════════════════════════════
+
+/
+
+ * Parse a polynomial expression string into a list of terms.
+
+ * Each term: { coeff: number, powers: {x:n, y:n, z:n} }
+
+ */
+
+function parsePolynomial(expr) {
+
+  // Normalise: remove spaces, replace  with ^
+
+  let s = expr.replace(/\s+/g,'').replace(/\*\*/g,'^');
+
+  // Insert explicit * between coeff and variable: 3x → 3*x, 2xy → 2*x*y, etc.
+
+  s = s.replace(/([0-9])([a-z])/g,'$1*$2');
+
+  s = s.replace(/([a-z])([a-z])/g,'$1*$2');
+
+  s = s.replace(/([a-z])\^([0-9]+)([a-z])/g,'$1^$2*$3');
+
+  // Tokenise into terms (split on + / - keeping sign)
+
+  // Add a leading + so every term has a sign prefix
+
+  s = s.replace(/^-/,'NEG').replace(/\+-/,'+-');
+
+  let rawTerms = s.split(/(?=[+-])/);
+
+  // Restore the leading negative
+
+  rawTerms = rawTerms.map(t=>t.replace(/^NEG/,'-'));
+
+  const terms = [];
+
+  for (let raw of rawTerms) {
+
+    raw = raw.trim();
+
+    if (!raw) continue;
+
+    // Determine sign
+
+    let sign = 1;
+
+    if (raw.startsWith('-')) { sign = -1; raw = raw.slice(1); }
+
+    else if (raw.startsWith('+')) { raw = raw.slice(1); }
+
+    // Split by * to get factors
+
+    const factors = raw.split('*');
+
+    let coeff = sign;
+
+    const powers = {x:0, y:0, z:0};
+
+    for (let f of factors) {
+
+      f = f.trim();
+
+      if (!f) continue;
+
+      // Is it a pure number?
+
+      if (/^[0-9.]+$/.test(f)) {
+
+        coeff *= parseFloat(f);
+
+      } else {
+
+        // variable^power or just variable
+
+        const m = f.match(/^([xyz])\^([0-9]+)$/);
+
+        if (m) {
+
+          powers[m[1]] += parseInt(m[2]);
+
+        } else if (/^[xyz]$/.test(f)) {
+
+          powers[f] += 1;
+
+        } else {
+
+          // unrecognised factor — return null to signal failure
+
+          return null;
+
+        }
+
+      }
+
+    }
+
+    terms.push({ coeff, powers });
+
+  }
+
+  return terms;
+
+}
+
+/
+
+ * Differentiate a list of terms with respect to variable v.
+
+ * Returns new list of terms.
+
+ */
+
+function diffTerms(terms, v) {
+
+  const result = [];
+
+  for (const {coeff, powers} of terms) {
+
+    const p = powers[v];
+
+    if (p === 0) continue; // constant in v → disappears
+
+    const newCoeff = coeff * p;
+
+    const newPowers = {...powers};
+
+    newPowers[v] = p - 1;
+
+    result.push({ coeff: newCoeff, powers: newPowers });
+
+  }
+
+  return result;
+
+}
+
+/
+
+ * Render a list of terms as a readable string.
+
+ */
+
+function renderTerms(terms) {
+
+  if (terms.length === 0) return '0';
+
+  let out = '';
+
+  for (let i = 0; i < terms.length; i++) {
+
+    const {coeff, powers} = terms[i];
+
+    if (coeff === 0) continue;
+
+    // Sign
+
+    let absC = Math.abs(coeff);
+
+    if (i === 0) {
+
+      out += coeff < 0 ? '−' : '';
+
+    } else {
+
+      out += coeff < 0 ? ' − ' : ' + ';
+
+    }
+
+    // Coefficient (omit 1 if there are variables, keep for pure constant)
+
+    const varStr = ['x','y','z'].filter(v=>powers[v]>0)
+
+      .map(v=> powers[v]===1 ? v : v+'<sup>'+powers[v]+'</sup>').join('');
+
+    if (absC !== 1 || varStr === '') {
+
+      // Format nicely: integer vs decimal
+
+      const cStr = Number.isInteger(absC) ? absC.toString() : absC.toFixed(4);
+
+      out += cStr;
+
+    }
+
+    out += varStr;
+
+  }
+
+  return out || '0';
+
+}
+
+/
+
+ * Detect degree of homogeneity from parsed terms.
+
+ */
+
+function detectDegree(terms) {
+
+  if (!terms || terms.length === 0) return null;
+
+  const degrees = terms.filter(t=>t.coeff!==0).map(t=>t.powers.x+t.powers.y+t.powers.z);
+
+  if (degrees.length === 0) return 0;
+
+  const d0 = degrees[0];
+
+  return degrees.every(d=>d===d0) ? d0 : null;
+
+}
+
+/
+
+ * Build Euler's symbolic sum: x·∂f/∂x + y·∂f/∂y [+ z·∂f/∂z]
+
+ * Should equal n·f for homogeneous functions.
+
+ */
+
+function buildEulerSum(terms, is3) {
+
+  // Multiply each differentiated term list by the corresponding variable
+
+  const multiplyVar = (dTerms, v) => dTerms.map(t=>{
+
+    const newPow = {...t.powers};
+
+    newPow[v] += 1;
+
+    return {coeff: t.coeff, powers: newPow};
+
+  });
+
+  const dxTerms = multiplyVar(diffTerms(terms,'x'),'x');
+
+  const dyTerms = multiplyVar(diffTerms(terms,'y'),'y');
+
+  let combined = [...dxTerms, ...dyTerms];
+
+  if (is3) {
+
+    const dzTerms = multiplyVar(diffTerms(terms,'z'),'z');
+
+    combined = [...combined, ...dzTerms];
+
+  }
+
+  // Collect like terms
+
+  return collectTerms(combined);
+
+}
+
+function collectTerms(terms) {
+
+  const map = {};
+
+  for (const {coeff, powers} of terms) {
+
+    const key = `${powers.x},${powers.y},${powers.z}`;
+
+    if (map[key]) map[key].coeff += coeff;
+
+    else map[key] = {coeff, powers:{...powers}};
+
+  }
+
+  return Object.values(map).filter(t=>Math.abs(t.coeff)>1e-10);
+
+}
+
+function runPartial(){
+
+  const expr = document.getElementById('p-fn').value.trim();
+
+  const out = document.getElementById('partial-result');
+
+  if(!expr){showR(out,'<div style="color:#e74c3c">Please enter a function.</div>','error');return;}
+
+  const is3 = simVarsP === 3;
+
+  const terms = parsePolynomial(expr);
+
+  if (!terms || terms.length === 0) {
+
+    showR(out,`
+
+      <div class="step-item">
+
+        <div class="step-label">⚠ Parse Error</div>
+
+        <div class="step-val" style="color:#c0392b;">
+
+          Could not parse the expression symbolically.<br>
+
+          <strong>Supported forms:</strong> polynomial terms only, e.g.<br>
+
+          <code>x^3 + 3*x*y^2</code>, <code>x^2*y + y^3</code>, <code>2*x^2 + x*y + y^2</code><br>
+
+          Avoid: sqrt(), sin(), cos(), ln() — use the <em>Verify</em> tab for those.
+
+        </div>
+
+      </div>`,'error');
+
+    return;
+
+  }
+
+  const dxTerms = diffTerms(terms, 'x');
+
+  const dyTerms = diffTerms(terms, 'y');
+
+  const dzTerms = is3 ? diffTerms(terms, 'z') : [];
+
+  const degree = detectDegree(terms);
+
+  const eulerSum = buildEulerSum(terms, is3);
+
+  const nf = degree !== null ? terms.map(t=>({coeff:t.coeff*degree, powers:t.powers})) : null;
+
+  const vars = is3 ? 'x, y, z' : 'x, y';
+
+  let h = '';
+
+  // Given function
+
+  h += `<div class="step-item">
+
+    <div class="step-label">Given Function</div>
+
+    <div class="step-val">f(${vars}) = <strong>${renderTerms(terms)}</strong></div>
+
+  </div>`;
+
+  // Degree
+
+  h += `<div class="step-item">
+
+    <div class="step-label">Degree of Homogeneity</div>
+
+    <div class="step-val">
+
+      ${degree !== null
+
+        ? `<span class="badge-info">n = ${degree}</span> &nbsp; (all terms have degree ${degree})`
+
+        : `<span class="badge-fail">Not homogeneous</span> — terms have different degrees`}
+
+    </div>
+
+  </div>`;
+
+  // ∂f/∂x
+
+  h += `<div class="step-item">
+
+    <div class="step-label">∂f / ∂x</div>
+
+    <div class="step-val" style="font-family:'Courier New',monospace;font-size:15px;color:#2c3e50;">
+
+      ${renderTerms(dxTerms)}
+
+    </div>
+
+  </div>`;
+
+  // ∂f/∂y
+
+  h += `<div class="step-item">
+
+    <div class="step-label">∂f / ∂y</div>
+
+    <div class="step-val" style="font-family:'Courier New',monospace;font-size:15px;color:#2c3e50;">
+
+      ${renderTerms(dyTerms)}
+
+    </div>
+
+  </div>`;
+
+  // ∂f/∂z if 3-var
+
+  if (is3) {
+
+    h += `<div class="step-item">
+
+      <div class="step-label">∂f / ∂z</div>
+
+      <div class="step-val" style="font-family:'Courier New',monospace;font-size:15px;color:#2c3e50;">
+
+        ${renderTerms(dzTerms)}
+
+      </div>
+
+    </div>`;
+
+  }
+
+  // Euler's theorem verification (symbolic)
+
+  if (degree !== null) {
+
+    const eulerStr = renderTerms(eulerSum);
+
+    const nfStr = renderTerms(nf);
+
+    // Check symbolically by comparing string or numerically
+
+    const eulerMatch = renderTerms(collectTerms(eulerSum)) === renderTerms(collectTerms(nf)) ||
+
+      verifySymbolicMatch(eulerSum, nf);
+
+    h += `<div class="step-item">
+
+      <div class="step-label">Euler's Theorem Check</div>
+
+      <div class="step-val">
+
+        <div style="background:#f0fff4;border:1px solid #b2dfdb;border-radius:6px;padding:10px 14px;margin-bottom:8px;">
+
+          <div style="font-size:12px;color:#7f8c8d;margin-bottom:4px;">x·(∂f/∂x) + y·(∂f/∂y)${is3?'  + z·(∂f/∂z)':''} =</div>
+
+          <div style="font-family:'Courier New',monospace;font-size:15px;color:#155724;font-weight:600;">${eulerStr}</div>
+
+        </div>
+
+        <div style="background:#f0fff4;border:1px solid #b2dfdb;border-radius:6px;padding:10px 14px;">
+
+          <div style="font-size:12px;color:#7f8c8d;margin-bottom:4px;">n · f(${vars}) = ${degree} × f =</div>
+
+          <div style="font-family:'Courier New',monospace;font-size:15px;color:#155724;font-weight:600;">${nfStr}</div>
+
+        </div>
+
+        <div style="margin-top:10px;">
+
+          <span class="${eulerMatch?'badge-ok':'badge-fail'}">${eulerMatch?"✓ Euler's Theorem Verified Symbolically":"⚠ Check expressions above"}</span>
+
+        </div>
+
+      </div>
+
+    </div>`;
+
+  }
+
+  showR(out, h, 'info');
+
+}
+
+/ Numerically verify two term-lists are equal by sampling */
+
+function verifySymbolicMatch(termsA, termsB) {
+
+  const pts = [[2,3,5],[1,4,2],[3,7,1]];
+
+  for (const [x,y,z] of pts) {
+
+    const evalTerms = (ts) => ts.reduce((s,t)=>s+t.coeff*Math.pow(x,t.powers.x)*Math.pow(y,t.powers.y)*Math.pow(z,t.powers.z),0);
+
+    if (Math.abs(evalTerms(termsA)-evalTerms(termsB)) > 1e-6) return false;
+
+  }
+
+  return true;
+
+}
+
+// ══════════ FEEDBACK STARS ══════════
+
+let starRating=0;
+
+function initStars(){
+
+  starRating=0;
+
+  setTimeout(()=>{
+
+    document.querySelectorAll('.star').forEach(s=>{
+
+      s.addEventListener('mouseenter',()=>{const v=parseInt(s.dataset.v);document.querySelectorAll('.star').forEach(x=>x.classList.toggle('lit',parseInt(x.dataset.v)<=v));});
+
+      s.addEventListener('mouseleave',()=>{document.querySelectorAll('.star').forEach(x=>x.classList.toggle('lit',parseInt(x.dataset.v)<=starRating));});
+
+      s.addEventListener('click',()=>{starRating=parseInt(s.dataset.v);document.querySelectorAll('.star').forEach(x=>x.classList.toggle('lit',parseInt(x.dataset.v)<=starRating));});
+
     });
+
+  },50);
+
+}
+
+function submitFeedback(){
+  const name=document.getElementById('fb-name').value.trim();
+  const roll=document.getElementById('fb-roll').value.trim();
+  const clarity=document.getElementById('fb-clarity').value;
+  const comments=document.getElementById('fb-comments').value.trim();
+  const stars=starRating>0?'★'.repeat(starRating)+'☆'.repeat(5-starRating):'Not rated';
+
+  if(!name){alert('Please enter your name before submitting.');return;}
+
+  const btn=document.querySelector('.fb-submit');
+  btn.disabled=true;
+  btn.textContent='Sending…';
+
+  // ── EmailJS: sends directly to developer's inbox ──
+  // Replace YOUR_SERVICE_ID and YOUR_TEMPLATE_ID with values from emailjs.com
+  emailjs.send('YOUR_SERVICE_ID','YOUR_TEMPLATE_ID',{
+    to_email: 'anushk.bandre25@pccoepune.org',
+    subject:  "Virtual Lab Feedback – Euler's Theorem",
+    student_name:   name,
+    roll_number:    roll||'Not provided',
+    rating:         stars+' ('+starRating+'/5)',
+    theory_clarity: clarity||'Not selected',
+    comments:       comments||'(None)',
+    message:
+      "Virtual Lab Feedback — Euler's Theorem\n==========================================\n\n"+
+      'Student Name  : '+name+'\n'+
+      'Roll Number   : '+(roll||'Not provided')+'\n'+
+      'Rating        : '+stars+' ('+starRating+'/5)'+'\n'+
+      'Theory Clarity: '+(clarity||'Not selected')+'\n\n'+
+      'Comments:\n'+(comments||'(None)')+'\n\n--\nSent from Virtual Labs – PCCOE'
+  }).then(function(){
+    document.getElementById('fb-success').style.display='block';
+    btn.textContent='✈  Send Feedback';
+  },function(error){
+    alert('Failed to send feedback. Please try again.\nError: '+JSON.stringify(error));
+    btn.disabled=false;
+    btn.textContent='✈  Send Feedback';
   });
-});
-
-// ─── Step navigation ─────────────────────────────────
-function showStep(n) {
-  [1,2,3,4].forEach(i => {
-    document.getElementById('panel'+i).classList.toggle('active', i===n);
-    document.getElementById('tab'+i).classList.remove('active');
-  });
-  document.getElementById('tab'+n).classList.add('active');
-  if (n===4) drawVisualisations();
 }
 
-// ─── Step 1 — Compute q ──────────────────────────────
-function computeQ() {
-  const T0 = +document.getElementById('T0').value;
-  const T1 = +document.getElementById('T1').value;
-  const R0 = +document.getElementById('R0').value;
-  const R1 = +document.getElementById('R1').value;
-  const k  = +document.getElementById('k').value;
+// ══════════ INIT ══════════
 
-  if (!T0&&T0!==0||!T1&&T1!==0||!R0||!R1||!k||R1<=R0||R0<=0||k<=0) {
-    alert('Please enter valid values. Ensure R₁ > R₀ > 0 and k > 0.');
-    return;
-  }
+renderHeader();
 
-  q_actual = (2 * Math.PI * k * (T0 - T1)) / Math.log(R1 / R0);
-
-  document.getElementById('res-q').textContent = q_actual.toFixed(4) + ' W/m';
-  document.getElementById('res1').classList.add('show');
-  document.getElementById('att1').style.display = 'block';
-  attAttempts[1] = 0;
-  clearFeedback('att1-fb');
-}
-
-// ─── Step 2 — Compute q1 ─────────────────────────────
-function computeQ1() {
-  if (q_actual === null) { alert('Please complete Step 1 first.'); return; }
-  const MF = +document.getElementById('MF').value;
-  if (!MF || MF <= 0) { alert('Enter a valid multiplying factor.'); return; }
-  q1_actual = MF * q_actual;
-
-  document.getElementById('res-q1').textContent = q1_actual.toFixed(4) + ' W';
-  document.getElementById('res2').classList.add('show');
-  document.getElementById('att2').style.display = 'block';
-  attAttempts[2] = 0;
-  clearFeedback('att2-fb');
-}
-
-// ─── Step 3 — Compute T(R) ───────────────────────────
-function computeT() {
-  if (q_actual === null) { alert('Please complete Step 1 first.'); return; }
-  const T0 = +document.getElementById('T0').value;
-  const R0 = +document.getElementById('R0').value;
-  const k  = +document.getElementById('k').value;
-  const R  = +document.getElementById('R').value;
-
-  if (!R || R <= 0) { alert('Enter a valid radius R.'); return; }
-
-  T_actual = T0 - (q_actual * Math.log(R / R0)) / (2 * Math.PI * k);
-
-  document.getElementById('res-T').textContent = T_actual.toFixed(4) + ' °C';
-  document.getElementById('res3').classList.add('show');
-  document.getElementById('att3').style.display = 'block';
-  attAttempts[3] = 0;
-  clearFeedback('att3-fb');
-
-  // Show summary
-  document.getElementById('sum-q').textContent  = q_actual.toFixed(4)  + ' W/m';
-  document.getElementById('sum-q1').textContent = q1_actual !== null ? q1_actual.toFixed(4) + ' W' : '—';
-  document.getElementById('sum-T').textContent  = T_actual.toFixed(4)  + ' °C';
-  document.getElementById('summary-card').style.display = 'block';
-}
-
-// ─── Guided attempt checking ──────────────────────────
-function checkAttempt(step) {
-  const inputId = 'att'+step+'-input';
-  const fbId    = 'att'+step+'-fb';
-  const userVal = +document.getElementById(inputId).value;
-  const correct = step===1 ? q_actual : step===2 ? q1_actual : T_actual;
-  const unit    = step===1 ? 'W/m' : step===2 ? 'W' : '°C';
-  attAttempts[step]++;
-
-  const fb = document.getElementById(fbId);
-  fb.className = 'feedback-msg';
-
-  const tolerance = 0.01 * Math.abs(correct);
-  if (Math.abs(userVal - correct) <= Math.max(tolerance, 0.001)) {
-    fb.className = 'feedback-msg correct';
-    fb.textContent = '✅ Correct! Well done.';
-    document.getElementById('tab'+step).classList.add('done');
-  } else if (attAttempts[step] >= 3) {
-    fb.className = 'feedback-msg hint';
-    fb.textContent = `💡 Hint: The correct answer is ${correct.toFixed(4)} ${unit}. Review the formula in Theory.`;
-  } else {
-    fb.className = 'feedback-msg wrong';
-    fb.textContent = `❌ Not correct. Try again. (Attempt ${attAttempts[step]}/3)`;
-  }
-}
-
-function clearFeedback(id) {
-  const el = document.getElementById(id);
-  el.className = 'feedback-msg';
-  el.textContent = '';
-}
-
-// ─── Quiz ─────────────────────────────────────────────
-function checkQuiz(name, correct, fbId, optId) {
-  const sel = document.querySelector(`input[name="${name}"]:checked`);
-  const fb  = document.getElementById(fbId);
-  const opts = document.querySelectorAll(`#${optId} .quiz-opt`);
-
-  if (!sel) { alert('Please select an answer.'); return; }
-
-  fb.classList.add('show');
-  opts.forEach(opt => {
-    const val = opt.querySelector('input').value;
-    if (val === correct) opt.classList.add('correct-ans');
-    if (val === sel.value && val !== correct) opt.classList.add('wrong-ans');
-  });
-
-  if (sel.value === correct) {
-    fb.className = 'quiz-feedback show right';
-    fb.textContent = '✅ Correct!';
-  } else {
-    fb.className = 'quiz-feedback show bad';
-    fb.textContent = '❌ Incorrect. The highlighted option is correct.';
-  }
-
-  opts.forEach(opt => opt.querySelector('input').disabled = true);
-}
-
-// ─── Feedback form ────────────────────────────────────
-function submitFeedback() {
-  const name = document.getElementById('fb-name').value.trim();
-  const roll = document.getElementById('fb-roll').value.trim();
-  if (!name) { alert('Please enter your name.'); return; }
-
-  document.getElementById('fb-form').style.display = 'none';
-  document.getElementById('fb-success').classList.add('show');
-}
-
-// ─── Visualisations ──────────────────────────────────
-function drawVisualisations() {
-  if (q_actual === null) {
-    drawDefaultPipe();
-    return;
-  }
-
-  const T0 = +document.getElementById('T0').value;
-  const T1 = +document.getElementById('T1').value;
-  const R0 = +document.getElementById('R0').value;
-  const R1 = +document.getElementById('R1').value;
-
-  drawPipe(T0, T1, R0, R1);
-  drawGraph(T0, T1, R0, R1);
-}
-
-function tempToColor(t, tMin, tMax) {
-  const f = Math.max(0, Math.min(1, (t - tMin) / (tMax - tMin)));
-  // Blue (cold) → Orange → Red (hot)
-  const r = Math.round(21 + f * (211 - 21));
-  const g = Math.round(101 + f * (47 - 101));
-  const b = Math.round(192 + f * (47 - 192));
-  return `rgb(${r},${g},${b})`;
-}
-
-function drawPipe(T0, T1, R0, R1) {
-  const canvas = document.getElementById('pipeCanvas');
-  const ctx = canvas.getContext('2d');
-  const cx = canvas.width / 2, cy = canvas.height / 2;
-  const scale = Math.min(cx, cy) * 0.85;
-  const px0 = (R0 / R1) * scale;
-  const px1 = scale;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Background
-  ctx.fillStyle = '#f4f6fb';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Draw gradient rings
-  const steps = 80;
-  for (let i = 0; i <= steps; i++) {
-    const frac = i / steps;
-    const r_m = R0 + frac * (R1 - R0);
-    const T_r = T0 - (q_actual * Math.log(r_m / R0)) / (2 * Math.PI * +document.getElementById('k').value);
-    const px  = px0 + frac * (px1 - px0);
-    const px_prev = i === 0 ? 0 : px0 + ((i-1)/steps) * (px1 - px0);
-
-    ctx.beginPath();
-    ctx.arc(cx, cy, px, 0, 2*Math.PI);
-    ctx.arc(cx, cy, px_prev, 0, 2*Math.PI, true);
-    ctx.fillStyle = tempToColor(T_r, T1, T0);
-    ctx.fill();
-  }
-
-  // Inner hollow
-  ctx.beginPath();
-  ctx.arc(cx, cy, px0 * 0.5, 0, 2 * Math.PI);
-  ctx.fillStyle = '#dde3ee';
-  ctx.fill();
-
-  // Labels
-  ctx.font = '600 13px Source Sans 3, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#1c2b3a';
-  ctx.fillText(`T₀ = ${T0}°C`, cx, cy + 6);
-
-  ctx.font = '12px Source Sans 3, sans-serif';
-  ctx.fillStyle = '#1565c0';
-  ctx.fillText(`T₁ = ${T1}°C`, cx + px1 + 36, cy);
-
-  // Radius annotations
-  ctx.setLineDash([4,3]);
-  ctx.strokeStyle = '#90a4ae';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + px0, cy); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - px1); ctx.stroke();
-  ctx.setLineDash([]);
-
-  ctx.font = '11px Source Sans 3, sans-serif';
-  ctx.fillStyle = '#455a64';
-  ctx.textAlign = 'left';
-  ctx.fillText(`R₀=${R0}m`, cx + 4, cy - 5);
-  ctx.textAlign = 'center';
-  ctx.fillText(`R₁=${R1}m`, cx, cy - px1 - 8);
-}
-
-function drawDefaultPipe() {
-  const canvas = document.getElementById('pipeCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#f4f6fb';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.font = '14px Source Sans 3, sans-serif';
-  ctx.fillStyle = '#90a4ae';
-  ctx.textAlign = 'center';
-  ctx.fillText('Complete Step 1 to generate visualisation', canvas.width/2, canvas.height/2);
-}
-
-function drawGraph(T0, T1, R0, R1) {
-  const canvas = document.getElementById('graphCanvas');
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const pad = {t:20, r:30, b:44, l:60};
-  const gW = W - pad.l - pad.r, gH = H - pad.t - pad.b;
-
-  ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = '#fafbff';
-  ctx.fillRect(0, 0, W, H);
-
-  // Grid
-  ctx.strokeStyle = '#e0e7ef';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= 5; i++) {
-    const y = pad.t + (i/5) * gH;
-    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+gW, y); ctx.stroke();
-  }
-
-  // Plot T(r) curve
-  const k = +document.getElementById('k').value;
-  const steps = 100;
-  ctx.beginPath();
-  ctx.strokeStyle = '#d32f2f';
-  ctx.lineWidth = 2.5;
-
-  for (let i = 0; i <= steps; i++) {
-    const frac = i / steps;
-    const r = R0 + frac * (R1 - R0);
-    const T = T0 - (q_actual * Math.log(r / R0)) / (2 * Math.PI * k);
-    const x = pad.l + frac * gW;
-    const y = pad.t + ((T0 - T) / (T0 - T1)) * gH;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-
-  // Plot marked radius R if available
-  const R = +document.getElementById('R').value;
-  if (R >= R0 && R <= R1 && T_actual !== null) {
-    const xR = pad.l + ((R - R0)/(R1 - R0)) * gW;
-    const yR = pad.t + ((T0 - T_actual)/(T0 - T1)) * gH;
-    ctx.beginPath();
-    ctx.arc(xR, yR, 5, 0, 2*Math.PI);
-    ctx.fillStyle = '#e8a020';
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    ctx.font = '11px JetBrains Mono, monospace';
-    ctx.fillStyle = '#b8860b';
-    ctx.textAlign = 'center';
-    ctx.fillText(`T(${R}m)=${T_actual.toFixed(1)}°C`, xR, yR - 10);
-  }
-
-  // Axes
-  ctx.strokeStyle = '#455a64';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t+gH); ctx.lineTo(pad.l+gW, pad.t+gH); ctx.stroke();
-
-  // Axis labels
-  ctx.font = '12px Source Sans 3, sans-serif';
-  ctx.fillStyle = '#455a64';
-  ctx.textAlign = 'center';
-  ctx.fillText('Radius (m)', pad.l + gW/2, H - 5);
-
-  ctx.save();
-  ctx.translate(14, pad.t + gH/2);
-  ctx.rotate(-Math.PI/2);
-  ctx.textAlign = 'center';
-  ctx.fillText('Temperature (°C)', 0, 0);
-  ctx.restore();
-
-  // Tick labels R0, R1
-  ctx.fillStyle = '#607d8b';
-  ctx.font = '10px JetBrains Mono, monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText(R0.toFixed(3), pad.l, pad.t+gH+14);
-  ctx.fillText(R1.toFixed(3), pad.l+gW, pad.t+gH+14);
-
-  // T0, T1 markers
-  ctx.textAlign = 'right';
-  ctx.fillText(T0.toFixed(0)+'°', pad.l-4, pad.t+6);
-  ctx.fillText(T1.toFixed(0)+'°', pad.l-4, pad.t+gH+4);
-}
-
-// Sidebar active tracking
-const sections = ['aim','theory','pretest','simulation','posttest','references','contributors','feedback'];
-window.addEventListener('scroll', () => {
-  let cur = '';
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.getBoundingClientRect().top < 150) cur = id;
-  });
-  document.querySelectorAll('.sidebar a').forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#'+cur);
-  });
-});
-
-// Init visualisation on load if no data
-drawDefaultPipe();
-const gc = document.getElementById('graphCanvas');
-const gctx = gc.getContext('2d');
-gctx.clearRect(0,0,gc.width,gc.height);
-gctx.fillStyle='#fafbff'; gctx.fillRect(0,0,gc.width,gc.height);
-gctx.font='14px Source Sans 3,sans-serif';
-gctx.fillStyle='#90a4ae';
-gctx.textAlign='center';
-gctx.fillText('Complete Step 1 to generate graph',gc.width/2,gc.height/2);
 </script>
+
 </body>
+
 </html>
